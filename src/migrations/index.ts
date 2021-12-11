@@ -1,1 +1,1 @@
-export const test = 'test'
+export * from './scripts/1639255653382-addUserEntity';

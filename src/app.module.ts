@@ -6,14 +6,16 @@ import { dbConfig } from './config/db.config';
 import { UserModule } from './domains/user/user.module';
 
 import * as api from './api';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(dbConfig),
     UserModule,
+    AuthModule,
   ],
   controllers: [
-    api.UserController,
+    api.UserController, api.GoogleController,
   ],
   providers: [],
 })

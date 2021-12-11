@@ -43,4 +43,13 @@ export class EnvDto {
 
   @IsString()
   STELLAR_USER_SECRET_KEY: string;
+
+  @IsString()
+  GOOGLE_CLIENT_ID: string;
+
+  @IsString()
+  GOOGLE_SECRET: string;
+
+  @IsString()
+  AUTH_SALT: string;
 }
