@@ -1,0 +1,17 @@
+{
+    "configurations": [
+       {
+        "type": "node",
+        "request": "attach",
+        "name": "pixold-debug",
+        "port": 9235,
+        "timeout": 10000,
+        "stopOnEntry": true,
+        "cwd": "${workspaceFolder}",
+        "localRoot": "${workspaceFolder}",
+        "outFiles": ["${workspaceFolder}/build/**/*.js"],
+        "sourceMaps": true,
+        "internalConsoleOptions": "neverOpen"
+      },
+    ],
+  }

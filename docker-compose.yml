@@ -1,0 +1,10 @@
+version: "3.3"
+services:
+  db:
+    build:
+      context: ./db/Docker
+      dockerfile: Dockerfile
+    volumes:
+      - ./var/pgdata:/var/lib/postgresql/data
+    ports:
+      - "2342:5432"
