@@ -1,7 +1,7 @@
 import { Column, Entity } from 'typeorm';
 import { PixoldBaseEntity } from '../common/db/base-entity';
 
-@Entity()
+@Entity({ name: 'user' })
 export class UserEntity extends PixoldBaseEntity<UserEntity> {
     @Column({ unique: true })
     username: string;
