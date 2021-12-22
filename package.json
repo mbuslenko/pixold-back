@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "rimraf build && webpack",
+    "build": "tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "dev": "rimraf build && tsc-watch --noClear -p tsconfig.build.json --onSuccess \"node --inspect=0.0.0.0:9235 dist/main.js\" | uk-log",
     "migrate:generate": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:generate -n ",
