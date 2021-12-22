@@ -27,7 +27,7 @@ jobs:
           npm run build --if-present
 
       - name: Tar artifact files
-        run: tar -cvf artifact_files.tar /dist
+        run: tar -cvf artifact_files.tar /home/runner/work/pixold-back/pixold-back/dist
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
