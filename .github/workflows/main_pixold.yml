@@ -47,6 +47,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: custom-artifact
+          path: artifact_files.tar
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
