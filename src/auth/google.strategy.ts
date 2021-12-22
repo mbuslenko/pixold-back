@@ -12,7 +12,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_SECRET,
-      callbackURL: 'http://localhost:2000/google/redirect',
+      callbackURL: 'https://pixold.azurewebsites.net/google/redirect',
       scope: ['profile', 'email'],
     });
   }
