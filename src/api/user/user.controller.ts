@@ -11,13 +11,6 @@ export class UserController {
         private readonly userDomain: UserDomain
     ) { }
 
-    @Post('auth')
-    async auth(
-        @Body() body: Auth.GoogleRedirectResponse
-    ): Promise<any> {
-        return this.userDomain.authenticate(body);
-    }
-
     @UsePipes(new ValidationPipe())
     @UseGuards(PixoldAuthGuard)
     @Post('update/username')

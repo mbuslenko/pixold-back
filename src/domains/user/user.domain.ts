@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Auth } from '../../auth/auth.namespace';
+import { AuthDto } from '../../api/auth/dto/auth.dto';
 import { UserAuthService } from './services/user-auth.service';
 import { UserService } from './services/user.service';
 
@@ -10,7 +10,7 @@ export class UserDomain {
     private readonly userService: UserService,
   ) {}
 
-  async authenticate(props: Auth.GoogleRedirectResponse) {
+  async authenticate(props: AuthDto) {
     return this.userAuthService.authenticateService(props);
   }
 

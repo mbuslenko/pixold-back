@@ -25,7 +25,11 @@ import { CoinModule } from './domains/coin/coin.module';
     CoinModule,
   ],
   controllers: [
-    api.UserController, api.GoogleController, api.FaqController, api.WalletController,
+    api.UserController,
+    api.GoogleController,
+    api.FaqController,
+    api.WalletController,
+    api.AuthController,
   ],
   providers: [
     // {

@@ -1,17 +1,22 @@
-import { Injectable } from '@nestjs/common';
-import { Auth } from '../../../auth/auth.namespace';
-import { UserRepository } from '../persistance/user.repository';
 import * as uuid from 'uuid';
-import { UserEntity } from '../../../models';
 import * as crypto from 'crypto';
+
+import { Injectable } from '@nestjs/common'
+
 import { AUTH_SALT } from '../../../config';
 import { generateToken } from '../../../common/utils/generate-token';
+
+
+import { UserRepository } from '../persistance/user.repository';
+import { UserEntity } from '../../../models';
+
+import { AuthDto } from '../../../api/auth/dto/auth.dto';
 
 @Injectable()
 export class UserAuthService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async authenticateService(props: Auth.GoogleRedirectResponse) {
+  async authenticateService(props: AuthDto) {
     const row = await this.userRepository.findOne({
       where: {
         email: props.email,
@@ -26,15 +31,11 @@ export class UserAuthService {
       user = await this.userRepository.save(
         this.userRepository.create({
           username,
-          email: props.email,
-          firstName: props.firstName,
-          lastName: props.lastName,
-          avatarUrl: props.picture,
-          lastLogin: new Date(),
           accessToken: crypto
             .createHash('sha256')
             .update(AUTH_SALT + uuid.v4())
             .digest('hex'),
+          ...props,
         }),
       );
     } else {
