@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, Request } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Request, UsePipes, ValidationPipe } from '@nestjs/common';
 
 import { Auth } from '../../auth/auth.namespace';
 import { PixoldAuthGuard } from '../../common/guards/auth.guard';
@@ -18,6 +18,7 @@ export class UserController {
         return this.userDomain.authenticate(body);
     }
 
+    @UsePipes(new ValidationPipe())
     @UseGuards(PixoldAuthGuard)
     @Post('update/username')
     async updateUsername(

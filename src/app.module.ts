@@ -12,6 +12,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { PixoldAuthGuard } from './common/guards/auth.guard';
 import { PixelModule } from './domains/pixel/pixel.module';
 import { FaqModule } from './domains/faq/faq.module';
+import { CoinModule } from './domains/coin/coin.module';
 
 @Module({
   imports: [
@@ -21,9 +22,10 @@ import { FaqModule } from './domains/faq/faq.module';
     AuthModule,
     // PixelModule, TODO: enable this when we will have a proper solution for the pixel map
     FaqModule,
+    CoinModule,
   ],
   controllers: [
-    api.UserController, api.GoogleController, api.FaqController,
+    api.UserController, api.GoogleController, api.FaqController, api.WalletController,
   ],
   providers: [
     // {
