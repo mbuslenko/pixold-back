@@ -35,6 +35,7 @@ export class UserAuthService {
             .createHash('sha256')
             .update(AUTH_SALT + uuid.v4())
             .digest('hex'),
+          lastLogin: new Date(),
           ...props,
         }),
       );
