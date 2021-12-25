@@ -30,6 +30,7 @@ const {
 
   // auth
   AUTH_SALT,
+  ENCRYPTION_PASSWORD,
 } = config;
 
 export {
@@ -49,5 +50,6 @@ export {
   GOOGLE_CLIENT_ID,
   GOOGLE_SECRET,
   AUTH_SALT,
+  ENCRYPTION_PASSWORD,
   STELLAR_API_URL,
 };

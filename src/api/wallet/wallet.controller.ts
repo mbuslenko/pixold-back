@@ -25,8 +25,7 @@ export class WalletController {
   @ApiCreatedResponse({ type: ConnectWalletOkResponse })
   @ApiBadRequestResponse({ type: HttpErrorMessageType })
   @ApiBody({ schema: { example: { userId: 'string', publicKey: 'string', secretKey: 'string' } } })
-  // TODO: uncomment when the auth page will be ready
-  //@UseGuards(PixoldAuthGuard)
+  @UseGuards(PixoldAuthGuard)
   @UsePipes(new ValidationPipe())
   @Post('/connect')
    async connectWallet(@Body() props: ConnectWalletDto) {

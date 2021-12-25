@@ -59,5 +59,8 @@ export class EnvDto {
   AUTH_SALT: string;
 
   @IsString()
+  ENCRYPTION_PASSWORD: string;
+
+  @IsString()
   STELLAR_API_URL: string;
 }

@@ -10,6 +10,7 @@ import { Connection } from 'typeorm';
 import { UserRepository } from '../../domains/user/persistance/user.repository';
 import { UserService } from '../../domains/user/services/user.service';
 import { UserEntity } from '../../models';
+import { decrypt } from '../utils/encrypt-decrypt';
 import { generateToken } from '../utils/generate-token';
 
 @Injectable()
@@ -22,16 +23,22 @@ export class PixoldAuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const { authorization, user } = request.headers;
+    const { authorization } = request.headers;
 
-    let userRow: UserEntity
+    console.log(request.headers);
+
+    const decryptedHeader = decrypt(authorization);
+    const [userId, authToken] = (await decryptedHeader).split('$');
+
+    let userRow: UserEntity;
 
     try {
-      userRow = await this.userRepository
-      .findOne({ where: { id: user } })
+      userRow = await this.userRepository.findOne({ where: { id: userId } });
     } catch (e) {
-      return false
+      return false;
     }
+
+    console.log(userRow);
 
     if (!userRow) {
       return false;
@@ -39,7 +46,9 @@ export class PixoldAuthGuard implements CanActivate {
 
     const accessToken = generateToken(userRow.email, userRow.accessToken);
 
-    if (accessToken !== authorization) {
+    console.log('access: ' + accessToken);
+
+    if (accessToken !== authToken) {
       return false;
     } else {
       return true;

@@ -11,6 +11,7 @@ import { UserRepository } from '../persistance/user.repository';
 import { UserEntity } from '../../../models';
 
 import { AuthDto } from '../../../api/auth/dto/auth.dto';
+import { encrypt } from '../../../common/utils/encrypt-decrypt';
 
 @Injectable()
 export class UserAuthService {
@@ -44,8 +45,8 @@ export class UserAuthService {
     }
 
     return {
-      id: user.id,
-      accessToken: generateToken(user.email, user.accessToken),
+      userId: user.id,
+      accessToken: await encrypt(user.id + '$' + generateToken(user.email, user.accessToken)),
     };
   }
 }
