@@ -10,5 +10,6 @@ import { PixelSyncService } from './services/pixel.sync.service';
 @Module({
   imports: [TypeOrmModule.forFeature([PixelRepository])],
   providers: [PixelDomain, PixelService, PixelSyncService],
+  exports: [PixelDomain],
 })
 export class PixelModule {}

@@ -20,7 +20,7 @@ import { CoinModule } from './domains/coin/coin.module';
     GlobalModule,
     UserModule,
     AuthModule,
-    // PixelModule, TODO: enable this when we will have a proper solution for the pixel map
+    PixelModule,
     FaqModule,
     CoinModule,
   ],
@@ -30,6 +30,7 @@ import { CoinModule } from './domains/coin/coin.module';
     api.FaqController,
     api.WalletController,
     api.AuthController,
+    api.PixelController,
   ],
   providers: [
     // {

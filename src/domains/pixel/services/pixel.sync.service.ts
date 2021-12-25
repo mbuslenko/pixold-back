@@ -1,6 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Connection } from 'typeorm';
 
+import * as data from '../data/pixels-map.json';
+import { NODE_ENV } from '../../../config';
 import { PixelEntity } from '../../../models/pixel.entity';
 
 @Injectable()
@@ -8,26 +10,28 @@ export class PixelSyncService implements OnModuleInit {
   constructor(private connection: Connection) {}
 
   async onModuleInit() {
-    const data = require('../data/pixels.map.json');
+    if (NODE_ENV == 'production') {
+      await this.connection.manager.transaction(async (transactionManager) => {
+        await Promise.all(
+          data.map(async (el) => {
+            const numericId = data.indexOf(el) + 1;
 
-    await this.connection.manager.transaction(async (transactionManager) => {
-      await Promise.all(
-        data.map(async (el) => {
-          const row = await transactionManager.findOne(PixelEntity, {
-            where: { numericId: el.id },
-          });
+            const row = await transactionManager.findOne(PixelEntity, {
+              where: { numericId },
+            });
 
-          if (!row) {
-            await transactionManager.save(
-              transactionManager.create(PixelEntity, {
-                numericId: el.id,
-                xCoordinate: el.x,
-                yCoordinate: el.y,
-              }),
-            );
-          }
-        }),
-      );
-    });
+            if (!row) {
+              await transactionManager.save(
+                transactionManager.create(PixelEntity, {
+                  numericId,
+                  xCoordinate: el.x,
+                  yCoordinate: el.y,
+                }),
+              );
+            }
+          }),
+        );
+      });
+    }
   }
 }
