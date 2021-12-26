@@ -48,4 +48,14 @@ export class WalletService {
       throw new HttpException({ message: 'Wallet already exists' }, 400);
     }
   }
+
+  async getWallet(userId: string) {
+    const [wallet] = await this.walletRepository.getWallet(userId);
+    
+    return {
+      username: wallet.username,
+      balanceInUsd: wallet.balance_in_usd,
+      balanceInXlm: wallet.balance_in_xlm,
+    }
+  }
 }

@@ -12,4 +12,8 @@ export class CoinDomain {
   async connectWallet(props: ConnectWalletDto) {
     return this.walletService.connectWallet(props);
   }
+
+  async getWallet(userId: string) {
+    return this.walletService.getWallet(userId);
+  }
 }

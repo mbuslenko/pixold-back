@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -31,4 +31,11 @@ export class WalletController {
    async connectWallet(@Body() props: ConnectWalletDto) {
      return this.coinDomain.connectWallet(props);
    }
+
+  @Get('/:userId')
+  async getWallet(
+    @Param('userId') userId: string
+  ) {
+    return this.coinDomain.getWallet(userId);
+  }
 }

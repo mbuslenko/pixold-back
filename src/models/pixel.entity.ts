@@ -17,4 +17,7 @@ export class PixelEntity extends PixoldBaseEntity<PixelEntity> {
 
   @Column({ name: 'y_coordinate', type: 'real' })
   yCoordinate: number;
+
+  @Column({ name: 'redemption_code', default: '' })
+  redemptionCode: string;
 }

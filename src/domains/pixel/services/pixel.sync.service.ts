@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Connection } from 'typeorm';
 
@@ -26,6 +27,7 @@ export class PixelSyncService implements OnModuleInit {
                   numericId,
                   xCoordinate: el.x,
                   yCoordinate: el.y,
+                  redemptionCode: crypto.randomBytes(16).toString('hex'),
                 }),
               );
             }
