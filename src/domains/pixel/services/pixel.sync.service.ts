@@ -1,10 +1,10 @@
-import crypto from 'crypto';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Connection } from 'typeorm';
 
 import * as data from '../data/pixels-map.json';
 import { NODE_ENV } from '../../../config';
 import { PixelEntity } from '../../../models/pixel.entity';
+import { generateRandomString } from '../../../common/utils/generate-string';
 
 @Injectable()
 export class PixelSyncService implements OnModuleInit {
@@ -22,12 +22,14 @@ export class PixelSyncService implements OnModuleInit {
             });
 
             if (!row) {
+              const redemptionCode = generateRandomString()
+
               await transactionManager.save(
                 transactionManager.create(PixelEntity, {
                   numericId,
                   xCoordinate: el.x,
                   yCoordinate: el.y,
-                  redemptionCode: crypto.randomBytes(16).toString('hex'),
+                  redemptionCode,
                 }),
               );
             }
