@@ -25,10 +25,12 @@ export class PixoldAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const { authorization } = request.headers;
 
-    console.log(request.headers);
+    if (!authorization) {
+      return false
+    }
 
-    const decryptedHeader = decrypt(authorization);
-    const [userId, authToken] = (await decryptedHeader).split('$');
+    const decryptedHeader = await decrypt(authorization);
+    const [userId, authToken] = decryptedHeader.split('$');
 
     let userRow: UserEntity;
 
@@ -38,19 +40,17 @@ export class PixoldAuthGuard implements CanActivate {
       return false;
     }
 
-    console.log(userRow);
-
     if (!userRow) {
       return false;
     }
 
     const accessToken = generateToken(userRow.email, userRow.accessToken);
 
-    console.log('access: ' + accessToken);
-
     if (accessToken !== authToken) {
       return false;
     } else {
+      request.user = { uid: userId };
+
       return true;
     }
   }

@@ -9,4 +9,8 @@ export class PixelDomain {
   async getAllPixels() {
     return this.pixelService.getAllPixels();
   }
+
+  async redeemCode(userId: string, code: string) {
+    return this.pixelService.redeemCode(userId, code);
+  }
 }

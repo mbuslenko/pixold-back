@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { generateRandomColor } from '../../../common/utils/generate-color';
 
 import { PixelRepository } from '../persistance/pixel.repository';
@@ -37,5 +37,19 @@ export class PixelService {
     return this.pixelRepository.findOne({
       where: { numericId: id },
     });
+  }
+
+  async redeemCode(userId: string, redemptionCode: string) {
+    const pixel = await this.pixelRepository.findOne({
+      where: { redemptionCode },
+    });
+
+    if (!pixel) {
+      throw new BadRequestException({ message: 'Invalid code' })
+    }
+
+    pixel.ownerId = userId;
+
+    await this.pixelRepository.save(pixel);
   }
 }

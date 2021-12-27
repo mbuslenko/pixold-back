@@ -1,23 +1,60 @@
-import { Body, Controller, Post, UseGuards, Request, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Request,
+  UsePipes,
+  ValidationPipe,
+  Param,
+  Get,
+} from '@nestjs/common';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiHeaders,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { Auth } from '../../auth/auth.namespace';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { PixoldAuthGuard } from '../../common/guards/auth.guard';
 import { UserDomain } from '../../domains/user/user.domain';
-import { UpdateUsernameDto } from './dto/user.dto';
+import { CheckUsernameOkResponse, UpdateUsernameDto } from './dto/user.dto';
 
+@ApiTags('user')
 @Controller('user')
 export class UserController {
-    constructor(
-        private readonly userDomain: UserDomain
-    ) { }
+  constructor(private readonly userDomain: UserDomain) {}
 
-    @UsePipes(new ValidationPipe())
-    @UseGuards(PixoldAuthGuard)
-    @Post('update/username')
-    async updateUsername(
-        @Request() req: Request,
-        @Body() body: UpdateUsernameDto,
-    ) {
-        return this.userDomain.updateUsername(req.headers['user'], body.username);
-    }
+  @ApiOperation({ summary: `Uppdate user's username` })
+  @ApiCreatedResponse({ type: '' })
+  @ApiHeaders([
+    {
+      name: 'Authorization',
+      description: 'access token',
+      required: true,
+    },
+  ])
+  @ApiBody({ schema: { example: { username: 'string' } } })
+  @UsePipes(new ValidationPipe())
+  @UseGuards(PixoldAuthGuard)
+  @Post('update/username')
+  async updateUsername(
+    @CurrentUser() { uid }: any,
+    @Body() body: UpdateUsernameDto,
+  ) {
+    return this.userDomain.updateUsername(uid, body.username);
+  }
+
+  @ApiOperation({ summary: 'Check if username is free' })
+  @ApiOkResponse({ type: CheckUsernameOkResponse })
+  @ApiParam({ name: 'username' })
+  @Get('check/username/:username')
+  async checkUsername(@Param('username') username: string) {
+    return this.userDomain.checkUsername(username);
+  }
 }

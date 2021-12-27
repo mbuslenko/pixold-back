@@ -16,4 +16,14 @@ export class UserService {
       throw new BadRequestException(e.message);
     });
   }
+
+  async checkUsername(username: string): Promise<{ result: boolean }> {
+    const user = await this.userRepository.findOne({
+      where: { username },
+    });
+
+    return {
+      result: !user,
+    };
+  }
 }

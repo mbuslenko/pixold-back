@@ -17,4 +17,8 @@ export class UserDomain {
   async updateUsername(id: string, username: string) {
     return this.userService.updateUsername(id, username);
   }
+
+  async checkUsername(username: string) {
+    return this.userService.checkUsername(username);
+  }
 }

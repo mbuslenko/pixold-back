@@ -24,4 +24,21 @@ export class ConnectWalletOkResponse {
 
   @ApiProperty()
   balanceInXLM: number;
+
+  @ApiProperty()
+  balanceInPXL: number;
+}
+
+export class GetWalletOkResponse {
+  @ApiProperty()
+  username: string;
+
+  @ApiProperty()
+  balanceInUSD: number;
+
+  @ApiProperty()
+  balanceInXLM: number;
+
+  @ApiProperty()
+  balanceInPXL: number;
 }

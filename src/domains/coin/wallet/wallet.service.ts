@@ -43,6 +43,7 @@ export class WalletService {
         id: wallet.id,
         balanceInUSD: wallet.balanceInUSD,
         balanceInXLM: wallet.balanceInXLM,
+        balanceInPXL: wallet.balanceInPXL,
       }
     } else {
       throw new HttpException({ message: 'Wallet already exists' }, 400);
@@ -54,8 +55,9 @@ export class WalletService {
     
     return {
       username: wallet.username,
-      balanceInUsd: wallet.balance_in_usd,
-      balanceInXlm: wallet.balance_in_xlm,
+      balanceInUSD: wallet.balance_in_usd,
+      balanceInXLM: wallet.balance_in_xlm,
+      balanceInPXL: wallet.balance_in_pxl,
     }
   }
 }

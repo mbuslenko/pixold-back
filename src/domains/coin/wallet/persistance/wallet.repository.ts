@@ -9,6 +9,7 @@ export class WalletRepository extends Repository<StellarAccountsEntity> {
     SELECT 
       SUM(sa.balance_in_xlm) as balance_in_xlm, 
       SUM(sa.balance_in_usd) as balance_in_usd,
+      SUM(sa.balance_in_pxl) as balance_in_pxl,
       u.username
     FROM stellar_accounts sa 
     LEFT JOIN "user" u 
