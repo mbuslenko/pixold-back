@@ -33,4 +33,7 @@ export class AuthResponseDto {
 
   @ApiProperty()
   accessToken: string;
+
+  @ApiProperty()
+  updateUsername: boolean;
 }

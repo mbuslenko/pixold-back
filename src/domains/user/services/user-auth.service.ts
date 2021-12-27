@@ -25,6 +25,7 @@ export class UserAuthService {
     });
 
     let user: UserEntity;
+    let updateUsername: boolean;
 
     if (!row) {
       const username = 'pixold_user_' + uuid.v4();
@@ -40,13 +41,18 @@ export class UserAuthService {
           ...props,
         }),
       );
+
+      updateUsername = true
     } else {
       user = row;
+
+      updateUsername = false
     }
 
     return {
       userId: user.id,
       accessToken: await encrypt(user.id + '$' + generateToken(user.email, user.accessToken)),
+      updateUsername,
     };
   }
 }
