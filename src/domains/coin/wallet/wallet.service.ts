@@ -8,18 +8,21 @@ import { ConnectWalletDto } from '../../../api/wallet/dto/wallet.dto';
 
 @Injectable()
 export class WalletService {
-  constructor(
-    private readonly walletRepository: WalletRepository,
-  ) {}
+  constructor(private readonly walletRepository: WalletRepository) {}
 
   async connectWallet(props: ConnectWalletDto) {
-    const accountInfo = await stellar.getAccountInfo(props.publicKey).catch(e => {
-      if (e.status === 404) {
-        throw new HttpException({ message: 'To connect a wallet, you must have a balance on it' }, 400);
-      } else {
-        throw e
-      }
-    });
+    const accountInfo = await stellar
+      .getAccountInfo(props.publicKey)
+      .catch((e) => {
+        if (e.status === 404) {
+          throw new HttpException(
+            { message: 'To connect a wallet, you must have a balance on it' },
+            400,
+          );
+        } else {
+          throw e;
+        }
+      });
 
     for (const [key, value] of Object.entries(accountInfo.rawData.flags)) {
       if (value === true) {
@@ -27,7 +30,9 @@ export class WalletService {
       }
     }
 
-    const row = await this.walletRepository.findOne({ publicKey: props.publicKey });
+    const row = await this.walletRepository.findOne({
+      publicKey: props.publicKey,
+    });
 
     if (!row) {
       const wallet = await this.walletRepository.save(
@@ -36,15 +41,15 @@ export class WalletService {
           secretKey: props.secret,
           ownerId: props.userId,
           ...accountInfo,
-        })
-      )
+        }),
+      );
 
       return {
         id: wallet.id,
         balanceInUSD: wallet.balanceInUSD,
         balanceInXLM: wallet.balanceInXLM,
         balanceInPXL: wallet.balanceInPXL,
-      }
+      };
     } else {
       throw new HttpException({ message: 'Wallet already exists' }, 400);
     }
@@ -52,12 +57,20 @@ export class WalletService {
 
   async getWallet(userId: string) {
     const [wallet] = await this.walletRepository.getWallet(userId);
-    
+
     return {
       username: wallet.username,
       balanceInUSD: wallet.balance_in_usd,
       balanceInXLM: wallet.balance_in_xlm,
       balanceInPXL: wallet.balance_in_pxl,
-    }
+    };
+  }
+
+  async getPixoldCoinsLeft() {
+    return this.walletRepository
+      .findOne({ where: { ownerId: 'bf0fbe8d-1dc3-4ffa-a967-8131feaff6d3' } })
+      .then((response) => {
+        return response.balanceInPXL;
+      });
   }
 }

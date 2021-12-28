@@ -41,4 +41,9 @@ export class PixelController {
   async redeemCode(@CurrentUser() { uid }: any, @Body() body: RedeemCodeDto) {
     return this.pixelDomain.redeemCode(uid, body.code);
   }
+
+  @Get('/cron/mining')
+  miningCron() {
+    return this.pixelDomain.miningCron();
+  }
 }

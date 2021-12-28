@@ -31,6 +31,10 @@ const {
   // auth
   AUTH_SALT,
   ENCRYPTION_PASSWORD,
+
+  // notifications
+  TELEGRAM_NOTIFICATIONS_CHAT,
+  TELEGRAM_BOT_TOKEN,
 } = config;
 
 export {
@@ -52,4 +56,6 @@ export {
   AUTH_SALT,
   ENCRYPTION_PASSWORD,
   STELLAR_API_URL,
+  TELEGRAM_NOTIFICATIONS_CHAT,
+  TELEGRAM_BOT_TOKEN,
 };

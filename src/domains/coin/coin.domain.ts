@@ -16,4 +16,8 @@ export class CoinDomain {
   async getWallet(userId: string) {
     return this.walletService.getWallet(userId);
   }
+
+  async getPixoldCoinsLeft() {
+    return this.walletService.getPixoldCoinsLeft();
+  }
 }

@@ -63,4 +63,10 @@ export class EnvDto {
 
   @IsString()
   STELLAR_API_URL: string;
+
+  @IsString()
+  TELEGRAM_NOTIFICATIONS_CHAT: string
+
+  @IsString()
+  TELEGRAM_BOT_TOKEN: string;
 }
