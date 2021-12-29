@@ -58,6 +58,10 @@ export class WalletService {
   async getWallet(userId: string) {
     const [wallet] = await this.walletRepository.getWallet(userId);
 
+    if (!wallet) {
+      throw new HttpException({ message: 'Wallet not found' }, 400);
+    }
+
     return {
       username: wallet.username,
       balanceInUSD: wallet.balance_in_usd,
