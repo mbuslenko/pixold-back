@@ -46,6 +46,8 @@ export class PixelService {
 
     if (!pixel) {
       throw new BadRequestException({ message: 'Invalid code' })
+    } else if (pixel.ownerId == userId) {
+      throw new BadRequestException({ message: 'You already own this hexagon' })
     }
 
     pixel.ownerId = userId;
