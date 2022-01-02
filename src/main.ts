@@ -11,6 +11,21 @@ import { PORT } from './config';
 async function bootstrap() {
   const logger = new PixoldLogger('PIXOLD');
   const app = await NestFactory.create(AppModule, {
+    cors: {
+      origin: true,
+      allowedHeaders: [
+        'Origin',
+        'Access-Control-Request-Method',
+        'Access-Control-Allow-Origin',
+        'Accept',
+        'Cache-Control',
+        'Content-Type',
+        'Access-Control-Allow-Credentials',
+        'Authorization',
+      ],
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      credentials: true,
+    },
     logger,
   });
   initSwagger(app);
