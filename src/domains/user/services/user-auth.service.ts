@@ -38,6 +38,7 @@ export class UserAuthService {
             .update(AUTH_SALT + uuid.v4())
             .digest('hex'),
           lastLogin: new Date(),
+          avatarUrl: props.avatarUrl || 'https://api.pixold.xyz/default-avatar.jpg',
           ...props,
         }),
       );
@@ -47,6 +48,10 @@ export class UserAuthService {
       user = row;
 
       updateUsername = false
+
+      user.lastLogin = new Date();
+
+      await this.userRepository.save(user);
     }
 
     return {

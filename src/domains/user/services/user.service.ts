@@ -26,4 +26,18 @@ export class UserService {
       result: !user,
     };
   }
+
+  async getUserById(id: string): Promise<UserService.GetUserByIdResponse> {
+    return this.userRepository.getUserInfoById(id);
+  }
+}
+
+export namespace UserService {
+  export interface GetUserByIdResponse {
+    username: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl: string;
+    wallet: string;
+  }
 }

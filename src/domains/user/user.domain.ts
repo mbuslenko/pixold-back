@@ -21,4 +21,8 @@ export class UserDomain {
   async checkUsername(username: string) {
     return this.userService.checkUsername(username);
   }
+
+  async getUserById(id: string) {
+    return this.userService.getUserById(id);
+  }
 }

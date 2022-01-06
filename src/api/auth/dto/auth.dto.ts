@@ -21,6 +21,7 @@ export class AuthDto {
   @IsOptional()
   lastName?: string;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   @IsUrl()

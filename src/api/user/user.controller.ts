@@ -3,7 +3,6 @@ import {
   Controller,
   Post,
   UseGuards,
-  Request,
   UsePipes,
   ValidationPipe,
   Param,
@@ -19,11 +18,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { Auth } from '../../auth/auth.namespace';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { PixoldAuthGuard } from '../../common/guards/auth.guard';
 import { UserDomain } from '../../domains/user/user.domain';
-import { CheckUsernameOkResponse, UpdateUsernameDto } from './dto/user.dto';
+import { UserEntity } from '../../models';
+import { CheckUsernameOkResponse, GetUserByIdOkResponse, UpdateUsernameDto } from './dto/user.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -56,5 +55,20 @@ export class UserController {
   @Get('check/username/:username')
   async checkUsername(@Param('username') username: string) {
     return this.userDomain.checkUsername(username);
+  }
+
+  @Get('me')
+  @UseGuards(PixoldAuthGuard)
+  @ApiOperation({ summary: 'Get current user' })
+  @ApiHeaders([
+    {
+      name: 'Authorization',
+      description: 'access token',
+      required: true,
+    },
+  ])
+  @ApiOkResponse({ type: GetUserByIdOkResponse })
+  async getCurrentUser(@CurrentUser() { uid }: any) {
+    return this.userDomain.getUserById(uid);
   }
 }

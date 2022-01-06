@@ -17,3 +17,14 @@ export class RedeemCodeDto {
   @IsNotEmpty()
   code: string;
 }
+
+export class OneFreeHexagonOkResponse {
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  bid: string;
+
+  @ApiProperty()
+  purchaseLink: string;
+}
