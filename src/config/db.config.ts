@@ -16,4 +16,5 @@ export const dbConfig: ConnectionOptions = {
     migrationsRun: true,
     migrations: Object.values(migrations),
     entities: Object.values(entities),
+    ssl: { rejectUnauthorized: false }
 };

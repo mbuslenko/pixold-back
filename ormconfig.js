@@ -23,6 +23,7 @@ module.exports = [
     'migrations': [
       './src/migrations/scripts/*.ts',
     ],
+    'ssl': { 'rejectUnauthorized': false },
     cli: {
       'migrationsDir': './src/migrations/scripts',
     },
