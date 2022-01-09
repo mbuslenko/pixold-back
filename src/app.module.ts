@@ -3,6 +3,7 @@ import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { dbConfig } from './config/db.config';
 import { UserModule } from './domains/user/user.module';
@@ -15,13 +16,13 @@ import { PixelModule } from './domains/pixel/pixel.module';
 import { FaqModule } from './domains/faq/faq.module';
 import { CoinModule } from './domains/coin/coin.module';
 
-
 @Module({
   imports: [
     TypeOrmModule.forRoot(dbConfig),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
+    ScheduleModule.forRoot(),
     GlobalModule,
     UserModule,
     AuthModule,

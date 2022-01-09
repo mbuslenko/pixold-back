@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { PixelLevelsEnum } from '../../../common/consts/level.enum';
 
 export class GetAllPixelsOkResponse {
   @ApiProperty()
@@ -27,4 +28,42 @@ export class OneFreeHexagonOkResponse {
 
   @ApiProperty()
   purchaseLink: string;
+}
+
+export class HexagonInfoOkResponse {
+  @ApiProperty({
+    type: 'string',
+    enum: ['attack', 'miner', 'defender', 'without'],
+  })
+  type: 'attack' | 'miner' | 'defender' | 'without';
+
+  @ApiProperty({
+    type: 'string',
+    enum: ['starter', 'middle', 'pro', 'supreme'],
+  })
+  level: PixelLevelsEnum;
+
+  @ApiProperty()
+  coinsInStorage: number;
+
+  @ApiProperty()
+  owner: string;
+
+  @ApiProperty()
+  canAttack: boolean;
+
+  @ApiProperty()
+  coinsToUpgrade: number;
+}
+
+export class ChangeHexagonTypeDto {
+  @IsString()
+  @IsEnum(['attack', 'miner', 'defender'])
+  @IsNotEmpty()
+  type: 'attack' | 'miner' | 'defender';
+
+  @IsNumber()
+  @IsNotEmpty()
+  numericId: number;
+
 }

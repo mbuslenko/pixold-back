@@ -1,17 +1,33 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
   ApiHeaders,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { PixoldAuthGuard } from '../../common/guards/auth.guard';
 
 import { PixelDomain } from '../../domains/pixel/pixel.domain';
-import { GetAllPixelsOkResponse, OneFreeHexagonOkResponse, RedeemCodeDto } from './dto/pixel.dto';
+import {
+  ChangeHexagonTypeDto,
+  GetAllPixelsOkResponse,
+  HexagonInfoOkResponse,
+  OneFreeHexagonOkResponse,
+  RedeemCodeDto,
+} from './dto/pixel.dto';
 
 @ApiTags('hexagon')
 @Controller('hexagon')
@@ -54,7 +70,47 @@ export class PixelController {
     return {
       name: 'hexagon#567',
       bid: '100$',
-      purchaseLink: 'https://opensea.io/assets/matic/0x2953399124f0cbb46d2cbacd8a89cf0599974963/53812526196032344565437183040714628674999174739090954850032801003187019448321'
-    }
+      purchaseLink:
+        'https://opensea.io/assets/matic/0x2953399124f0cbb46d2cbacd8a89cf0599974963/53812526196032344565437183040714628674999174739090954850032801003187019448321',
+    };
+  }
+
+  @ApiOperation({ summary: 'Get hexagon info' })
+  @ApiParam({ name: 'numericId', description: 'hexagon numeric id' })
+  @ApiHeaders([
+    { name: 'Authorization', description: 'access token', required: true },
+  ])
+  @ApiOkResponse({ type: HexagonInfoOkResponse })
+  @UseGuards(PixoldAuthGuard)
+  @Get('/:numericId')
+  async getHexagonInfo(
+    @CurrentUser() { uid }: any,
+    @Param('numericId') numericId: number,
+  ) {
+    return this.pixelDomain.getHexagonInfo(numericId, uid);
+  }
+
+  @HttpCode(201)
+  @ApiOperation({ summary: 'Change hexagon type' })
+  @ApiBody({
+    schema: {
+      example: { numericId: 'number', type: `'attack' | 'miner' | 'defender'` },
+    },
+  })
+  @ApiHeaders([
+    {
+      name: 'Authorization',
+      description: 'access token',
+      required: true,
+    },
+  ])
+  @ApiCreatedResponse()
+  @UseGuards(PixoldAuthGuard)
+  @Post('/change-type')
+  async changeHexagonType(
+    @CurrentUser() { uid }: any,
+    @Body() body: ChangeHexagonTypeDto,
+  ) {
+    return this.pixelDomain.changeHexagonType(body.numericId, body.type, uid);
   }
 }

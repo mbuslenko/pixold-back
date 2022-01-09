@@ -21,4 +21,12 @@ export class PixelDomain {
   async miningCron() {
     return this.gameService.miningCron();
   }
+
+  async getHexagonInfo(numericId: number, userId: string) {
+    return this.pixelService.getHexagonInfo(numericId, userId);
+  }
+
+  async changeHexagonType(numericId: number, type: 'attack' | 'miner' | 'defender', userId: string) {
+    return this.pixelService.changeType(numericId, type, userId);
+  }
 }
