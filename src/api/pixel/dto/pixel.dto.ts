@@ -13,6 +13,11 @@ export class GetAllPixelsOkResponse {
   color: string;
 }
 
+export class GetAllPixelsOwnedByUsersOkResponse {
+  @ApiProperty()
+  username: number;
+}
+
 export class RedeemCodeDto {
   @IsString()
   @IsNotEmpty()

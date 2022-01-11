@@ -24,6 +24,7 @@ import { PixelDomain } from '../../domains/pixel/pixel.domain';
 import {
   ChangeHexagonTypeDto,
   GetAllPixelsOkResponse,
+  GetAllPixelsOwnedByUsersOkResponse,
   HexagonInfoOkResponse,
   OneFreeHexagonOkResponse,
   RedeemCodeDto,
@@ -42,6 +43,15 @@ export class PixelController {
     return this.pixelDomain.getAllPixels();
   }
 
+  @UseGuards(PixoldAuthGuard)
+  @ApiOperation({ summary: 'Get all pixels owned by users' })
+  @ApiHeaders([{ name: 'Authorization', description: 'access tokn', required: true }])
+  @ApiOkResponse({ type: [GetAllPixelsOwnedByUsersOkResponse] })
+  @Get('/all/owned')
+  async getAllPixelsOwnedByUsers() {
+    return this.pixelDomain.getAllPixelsOwnedByUsers();
+  }
+
   @ApiOperation({ summary: 'Redeem code to get hexagon' })
   @ApiCreatedResponse({ type: '' })
   @ApiHeaders([
@@ -58,6 +68,7 @@ export class PixelController {
     return this.pixelDomain.redeemCode(uid, body.code);
   }
 
+  @ApiOperation({ summary: 'for technical reasons' })
   @Get('/cron/mining')
   miningCron() {
     return this.pixelDomain.miningCron();

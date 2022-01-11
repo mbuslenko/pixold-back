@@ -3,7 +3,7 @@ import { PixoldBaseEntity } from '../common/db/base-entity';
 
 @Entity({ name: 'pixel' })
 export class PixelEntity extends PixoldBaseEntity<PixelEntity> {
-  @Column({ name: 'numeric_id', type: 'real' })
+  @Column({ name: 'numeric_id', type: 'real', unique: true })
   numericId: number;
 
   @Column({ type: 'varchar', default: 'without' })
