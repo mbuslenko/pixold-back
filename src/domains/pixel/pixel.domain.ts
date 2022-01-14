@@ -14,6 +14,10 @@ export class PixelDomain {
     return this.pixelService.getAllPixels();
   }
 
+  async getAllPixelsOwnedByUsers() {
+    return this.pixelService.getAllPixelsOwnedByUsers();
+  }
+
   async redeemCode(userId: string, code: string) {
     return this.pixelService.redeemCode(userId, code);
   }

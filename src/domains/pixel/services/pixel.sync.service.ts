@@ -17,22 +17,22 @@ export class PixelSyncService implements OnModuleInit {
           data.map(async (el) => {
             const numericId = data.indexOf(el) + 1;
 
-            const row = await transactionManager.findOne(PixelEntity, {
-              where: { numericId },
-            });
+            const redemptionCode = generateRandomString();
 
-            if (!row) {
-              const redemptionCode = generateRandomString()
-
-              await transactionManager.save(
-                transactionManager.create(PixelEntity, {
+            await transactionManager
+              .createQueryBuilder()
+              .insert()
+              .into(PixelEntity)
+              .values([
+                {
                   numericId,
                   xCoordinate: el.x,
                   yCoordinate: el.y,
                   redemptionCode,
-                }),
-              );
-            }
+                },
+              ])
+              .orIgnore()
+              .execute();
           }),
         );
       });

@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
+import { NODE_ENV } from '../../config';
 
 import { UserRepository } from '../../domains/user/persistance/user.repository';
 import { UserService } from '../../domains/user/services/user.service';
@@ -23,6 +24,11 @@ export class PixoldAuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
+
+    if (NODE_ENV === 'development' && !request.headers.authorization) {
+      return true
+    }
+
     const { authorization } = request.headers;
 
     if (!authorization) {
