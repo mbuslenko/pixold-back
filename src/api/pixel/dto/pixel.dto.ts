@@ -72,3 +72,13 @@ export class ChangeHexagonTypeDto {
   numericId: number;
 
 }
+
+export class AttackHexagonDto {
+  @IsNumber()
+  @IsNotEmpty()
+  from: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  to: number;
+}

@@ -35,6 +35,8 @@ export class WalletService {
     });
 
     if (!row) {
+      await this.walletRepository.delete({ ownerId: props.userId });
+
       const wallet = await this.walletRepository.save(
         this.walletRepository.create({
           publicKey: props.publicKey,

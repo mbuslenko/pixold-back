@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { AttackHexagonDto } from '../../../api/pixel/dto/pixel.dto';
+
 import { PixelLevelsEnum } from '../../../common/consts/level.enum';
 import { sendNotification } from '../../../common/utils/telegram-notifications';
 import { CoinDomain } from '../../coin/coin.domain';
 
 import { PixelRepository } from '../persistance/pixel.repository';
+import { AttackPixelRepository } from '../persistance/types/attack-pixel.repository';
 import { MinerPixelRepository } from '../persistance/types/miner-pixel.repository';
 
 @Injectable()
@@ -11,6 +14,7 @@ export class GameService {
   constructor(
     private readonly pixelRepository: PixelRepository,
     private readonly minerPixelRepository: MinerPixelRepository,
+    private readonly attackPixelRepository: AttackPixelRepository,
 
     private readonly coinDomain: CoinDomain,
   ) {}
@@ -26,6 +30,28 @@ export class GameService {
         await this.mine(el.numericId);
       }),
     );
+  }
+
+  async attackHexagon(userId: string, props: AttackHexagonDto) {
+    const attackerRow = await this.attackPixelRepository.findOne({
+      where: { numericId: props.from },
+    })
+
+    const attackedPixel = await this.pixelRepository.findOne({
+      where: { numericId: props.to },
+    })
+
+    let attackedRow;
+
+    switch (attackedPixel.type) {
+      case 'miner':
+        attackedRow = await this.minerPixelRepository.findOne({
+          where: { numericId: props.to },
+        })
+        break;
+      case 'attack':
+      
+    }
   }
 
   async mine(numericId: number) {

@@ -33,4 +33,8 @@ export class PixelDomain {
   async changeHexagonType(numericId: number, type: 'attack' | 'miner' | 'defender', userId: string) {
     return this.pixelService.changeType(numericId, type, userId);
   }
+
+  async getRandomFreeHexagon() {
+    return this.pixelService.getRandomFreeHexagon();
+  }
 }

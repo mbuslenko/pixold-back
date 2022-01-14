@@ -212,6 +212,16 @@ export class PixelService {
       ),
     };
   }
+
+  async getRandomFreeHexagon(): Promise<PixelService.GetRandomFreeHexagon> {
+    const [{ numeric_id: numericId }] = await this.pixelRepository.getOneRandomFreeHexagon();
+
+    return {
+      name: 'hexagon#' +  numericId,
+      bid: '100$',
+      purchaseLink: 'https://opensea.io/assets/matic/0x2953399124f0cbb46d2cbacd8a89cf0599974963/53812526196032344565437183040714628674999174739090954850032801003187019448321'
+    }
+  }
 }
 
 export namespace PixelService {
@@ -228,5 +238,11 @@ export namespace PixelService {
     [key: string]: {
       numericId: number;
     }[];
+  }
+
+  export interface GetRandomFreeHexagon {
+    name: string;
+      bid: string;
+      purchaseLink: string;
   }
 }

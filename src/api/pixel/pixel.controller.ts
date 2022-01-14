@@ -78,12 +78,7 @@ export class PixelController {
   @ApiOkResponse({ type: OneFreeHexagonOkResponse })
   @Get('one-free')
   getOneFreeHexagon() {
-    return {
-      name: 'hexagon#567',
-      bid: '100$',
-      purchaseLink:
-        'https://opensea.io/assets/matic/0x2953399124f0cbb46d2cbacd8a89cf0599974963/53812526196032344565437183040714628674999174739090954850032801003187019448321',
-    };
+    return this.pixelDomain.getRandomFreeHexagon();
   }
 
   @ApiOperation({ summary: 'Get hexagon info' })
