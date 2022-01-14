@@ -15,6 +15,7 @@ import { GlobalModule } from './global.module';
 import { PixelModule } from './domains/pixel/pixel.module';
 import { FaqModule } from './domains/faq/faq.module';
 import { CoinModule } from './domains/coin/coin.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { CoinModule } from './domains/coin/coin.module';
     PixelModule,
     FaqModule,
     CoinModule,
+    EventsModule,
   ],
   controllers: [
     api.UserController,

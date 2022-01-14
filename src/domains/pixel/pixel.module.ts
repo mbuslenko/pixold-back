@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EventsModule } from '../../events/events.module';
 import { CoinModule } from '../coin/coin.module';
 import { UserModule } from '../user/user.module';
 
 import { PixelRepository } from './persistance/pixel.repository';
 import { AttackPixelRepository } from './persistance/types/attack-pixel.repository';
+import { DefenderPixelRepository } from './persistance/types/defender-pixel.repository';
 import { MinerPixelRepository } from './persistance/types/miner-pixel.repository';
 
 import { PixelDomain } from './pixel.domain';
@@ -18,9 +20,11 @@ import { PixelSyncService } from './services/pixel.sync.service';
       PixelRepository,
       MinerPixelRepository,
       AttackPixelRepository,
+      DefenderPixelRepository,
     ]),
     CoinModule,
     UserModule,
+    EventsModule,
   ],
   providers: [PixelDomain, PixelService, PixelSyncService, GameService],
   exports: [PixelDomain],

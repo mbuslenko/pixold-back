@@ -6,6 +6,7 @@ import {
   IsString,
   IsUrl,
 } from 'class-validator';
+import { GetWalletOkResponse } from '../../wallet/dto/wallet.dto';
 
 export class AuthDto {
   @IsString()
@@ -37,4 +38,7 @@ export class AuthResponseDto {
 
   @ApiProperty()
   updateUsername: boolean;
+
+  @ApiProperty()
+  wallet: GetWalletOkResponse | null;
 }

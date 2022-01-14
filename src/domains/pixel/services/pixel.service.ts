@@ -1,11 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Connection } from 'typeorm';
+
 import { PixelLevelsEnum } from '../../../common/consts/level.enum';
 import { generateRandomColor } from '../../../common/utils/generate-color';
+import { EventsGateway } from '../../../events/events.gateway';
+
 import { CoinDomain } from '../../coin/coin.domain';
 import { UserDomain } from '../../user/user.domain';
 
 import { PixelRepository } from '../persistance/pixel.repository';
+import { AttackPixelRepository } from '../persistance/types/attack-pixel.repository';
+import { DefenderPixelRepository } from '../persistance/types/defender-pixel.repository';
 import { MinerPixelRepository } from '../persistance/types/miner-pixel.repository';
 
 @Injectable()
@@ -15,9 +20,11 @@ export class PixelService {
 
     private readonly pixelRepository: PixelRepository,
     private readonly coinDomain: CoinDomain,
+    private readonly userDomain: UserDomain,
 
     private readonly minerPixelRepository: MinerPixelRepository,
-    private readonly userDomain: UserDomain,
+    private readonly attackPixelRepository: AttackPixelRepository,
+    private readonly defenderPixelRepository: DefenderPixelRepository,
   ) {}
 
   async getAllPixelsOwnedByUsers(): Promise<PixelService.GetAllPixelsResponse> {
@@ -150,6 +157,34 @@ export class PixelService {
 
     if (row.ownerId === userId) {
       await this.pixelRepository.update({ numericId }, { type });
+
+      // TODO: delete all other rows with this hexagon id
+      switch (type) {
+        case 'attack':
+          await this.attackPixelRepository.save(
+            this.attackPixelRepository.create({
+              numericId,
+              level: PixelLevelsEnum.STARTER,
+            }),
+          );
+          break;
+        case 'miner':
+          await this.minerPixelRepository.save(
+            this.minerPixelRepository.create({
+              numericId,
+              level: PixelLevelsEnum.STARTER,
+            }),
+          );
+          break;
+        case 'defender':
+          await this.defenderPixelRepository.save(
+            this.defenderPixelRepository.create({
+              numericId,
+              level: PixelLevelsEnum.STARTER,
+            }),
+          );
+          break;
+      }
     } else {
       throw new BadRequestException({
         message: 'You can not change type of other user hexagon',
@@ -190,11 +225,17 @@ export class PixelService {
       case 'miner':
         typeRow = await this.minerPixelRepository.findOne({
           where: { numericId },
-        }); // TODO: make for other types
+        });
         break;
       case 'attack':
+        typeRow = await this.attackPixelRepository.findOne({
+          where: { numericId },
+        });
         break;
       case 'defender':
+        typeRow = await this.defenderPixelRepository.findOne({
+          where: { numericId },
+        });
         break;
       case 'without':
         typeRow = { level: PixelLevelsEnum.STARTER };
@@ -203,7 +244,7 @@ export class PixelService {
     return {
       type: hexagonRow.type,
       level: typeRow.level,
-      coinsInStorage: typeRow.coinsInStorage,
+      coinsInStorage: typeRow.coinsInStorage || null,
       owner: ownerUsername,
       canAttack: hexagonRow.ownerId !== userId,
       coinsToUpgrade: await this.getAmountOfCoinsToUpgrade(
@@ -214,13 +255,15 @@ export class PixelService {
   }
 
   async getRandomFreeHexagon(): Promise<PixelService.GetRandomFreeHexagon> {
-    const [{ numeric_id: numericId }] = await this.pixelRepository.getOneRandomFreeHexagon();
+    const [{ numeric_id: numericId }] =
+      await this.pixelRepository.getOneRandomFreeHexagon();
 
     return {
-      name: 'hexagon#' +  numericId,
+      name: 'hexagon#' + numericId,
       bid: '100$',
-      purchaseLink: 'https://opensea.io/assets/matic/0x2953399124f0cbb46d2cbacd8a89cf0599974963/53812526196032344565437183040714628674999174739090954850032801003187019448321'
-    }
+      purchaseLink:
+        'https://opensea.io/assets/matic/0x2953399124f0cbb46d2cbacd8a89cf0599974963/53812526196032344565437183040714628674999174739090954850032801003187019448321',
+    };
   }
 }
 
@@ -242,7 +285,7 @@ export namespace PixelService {
 
   export interface GetRandomFreeHexagon {
     name: string;
-      bid: string;
-      purchaseLink: string;
+    bid: string;
+    purchaseLink: string;
   }
 }

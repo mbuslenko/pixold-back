@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { WalletRepository } from './wallet/persistance/wallet.repository';
+
 import { CoinDomain } from './coin.domain';
 import { CoinService } from './coin/coin.service';
-import { WalletRepository } from './wallet/persistance/wallet.repository';
 import { WalletService } from './wallet/wallet.service';
 
 @Module({

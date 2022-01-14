@@ -1,13 +1,17 @@
+import { performance } from 'perf_hooks';
 import { Injectable } from '@nestjs/common';
-import { AttackHexagonDto } from '../../../api/pixel/dto/pixel.dto';
 
+import { AttackHexagonDto } from '../../../api/pixel/dto/pixel.dto';
 import { PixelLevelsEnum } from '../../../common/consts/level.enum';
 import { sendNotification } from '../../../common/utils/telegram-notifications';
+
 import { CoinDomain } from '../../coin/coin.domain';
 
 import { PixelRepository } from '../persistance/pixel.repository';
 import { AttackPixelRepository } from '../persistance/types/attack-pixel.repository';
 import { MinerPixelRepository } from '../persistance/types/miner-pixel.repository';
+import { DefenderPixelRepository } from '../persistance/types/defender-pixel.repository';
+import { EventsGateway } from '../../../events/events.gateway';
 
 @Injectable()
 export class GameService {
@@ -15,8 +19,11 @@ export class GameService {
     private readonly pixelRepository: PixelRepository,
     private readonly minerPixelRepository: MinerPixelRepository,
     private readonly attackPixelRepository: AttackPixelRepository,
+    private readonly defenderPixelRepository: DefenderPixelRepository,
 
     private readonly coinDomain: CoinDomain,
+
+    private readonly eventsGateway: EventsGateway,
   ) {}
 
   async miningCron(): Promise<void> {
@@ -32,25 +39,105 @@ export class GameService {
     );
   }
 
-  async attackHexagon(userId: string, props: AttackHexagonDto) {
+  async attackHexagon(userId: string, props: AttackHexagonDto): Promise<void> {
+    // TODO: change to transaction
+
+    const start = performance.now();
+
     const attackerRow = await this.attackPixelRepository.findOne({
       where: { numericId: props.from },
-    })
+    });
+
+    const attackerPixel = await this.pixelRepository.findOne({
+      where: { numericId: props.from },
+    });
 
     const attackedPixel = await this.pixelRepository.findOne({
       where: { numericId: props.to },
-    })
+    });
 
-    let attackedRow;
+    const attackedHexagons: {
+      numericId: number;
+      type: string;
+      xCoordinate: number;
+      yCoordinate: number;
+    }[] = await this.pixelRepository.find({
+      select: ['numericId', 'type', 'xCoordinate', 'yCoordinate'],
+      where: { ownerId: attackedPixel.ownerId },
+    });
 
-    switch (attackedPixel.type) {
-      case 'miner':
-        attackedRow = await this.minerPixelRepository.findOne({
-          where: { numericId: props.to },
-        })
-        break;
-      case 'attack':
-      
+    const closestHexagonId = this.findClosestHexagon(
+      {
+        xCoordinate: attackerPixel.xCoordinate,
+        yCoordinate: attackerPixel.yCoordinate,
+      },
+      attackedHexagons,
+    );
+
+    const closestHexagonRow = await this.pixelRepository.findOne({
+      where: { numericId: closestHexagonId },
+    });
+
+    const distance = this.calculateDistance(attackerPixel, closestHexagonRow);
+
+    const { sum: coinsInStorage } = await this.getAllCoinsInUsersStorages(
+      attackerPixel.ownerId,
+    );
+    const hexagonsNumber = attackedHexagons.length;
+
+    let percentRobbed = 0;
+    let timeForAttackInSeconds = distance * 2;
+
+    if (closestHexagonRow.type === 'defender') {
+      // TODO: add logic for defender
+    } else {
+      switch (attackerRow.level) {
+        case PixelLevelsEnum.STARTER:
+          // random percent between 15 and 30
+          percentRobbed = Math.floor(Math.random() * 15) + 15;
+          timeForAttackInSeconds += hexagonsNumber * 60;
+          break;
+        case PixelLevelsEnum.MIDDLE:
+          percentRobbed = Math.floor(Math.random() * 15) + 30;
+          timeForAttackInSeconds += hexagonsNumber * 55;
+          break;
+        case PixelLevelsEnum.PRO:
+          percentRobbed = Math.floor(Math.random() * 15) + 45;
+          timeForAttackInSeconds += hexagonsNumber * 50;
+          break;
+        case PixelLevelsEnum.SUPREME:
+          percentRobbed = Math.floor(Math.random() * 20) + 60;
+          timeForAttackInSeconds += hexagonsNumber * 45;
+          break;
+      }
+    }
+
+    // todo: what if there are no coins in storage?
+    await this.minerPixelRepository.substractCoinsFromStorages(
+      attackedPixel.ownerId,
+      percentRobbed,
+    );
+
+    // TODO: send coins to the robber
+
+    const end = performance.now();
+
+    const finalTimeForAttack = timeForAttackInSeconds - (end - start);
+
+    if (finalTimeForAttack < 0) {
+      this.eventsGateway.sendAttackMessage({
+        to: userId,
+        type: 'success',
+        message: `Your previous attack was successfully completed`,
+      });
+    } else {
+      setTimeout(() => {
+        this.eventsGateway.sendAttackMessage({
+          to: userId,
+          type: 'success',
+          message: `Your previous attack was successfully completed`,
+        });
+      }, finalTimeForAttack * 1000);
     }
   }
 
@@ -114,5 +201,45 @@ export class GameService {
     }
 
     return coinsLeft > coins;
+  }
+
+  findClosestHexagon(
+    from: { xCoordinate: number; yCoordinate: number },
+    arr: {
+      numericId: number;
+      type: string;
+      xCoordinate: number;
+      yCoordinate: number;
+    }[],
+  ): number {
+    let minDistance = Infinity;
+    let closestHexagon = -1;
+
+    arr.forEach((el) => {
+      const distance = this.calculateDistance(from, el);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestHexagon = el.numericId;
+      }
+    });
+
+    return closestHexagon;
+  }
+
+  calculateDistance(
+    from: { xCoordinate: number; yCoordinate: number },
+    to: { xCoordinate: number; yCoordinate: number },
+  ) {
+    const x = from.xCoordinate - to.xCoordinate;
+    const y = from.yCoordinate - to.yCoordinate;
+
+    return Math.sqrt(x * x + y * y);
+  }
+
+  async getAllCoinsInUsersStorages(userId: string): Promise<{ sum: number }> {
+    return this.minerPixelRepository.query(
+      `SELECT SUM(coinsInStorage) FROM miner_pixels WHERE ownerId = '${userId}'`,
+    );
   }
 }

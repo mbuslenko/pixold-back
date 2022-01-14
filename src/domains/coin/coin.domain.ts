@@ -15,8 +15,8 @@ export class CoinDomain {
     return this.walletService.connectWallet(props);
   }
 
-  async getWallet(userId: string) {
-    return this.walletService.getWallet(userId);
+  async getWallet(userId: string, throwError: boolean) {
+    return this.walletService.getWallet(userId, throwError);
   }
 
   async getPixoldCoinsLeft() {

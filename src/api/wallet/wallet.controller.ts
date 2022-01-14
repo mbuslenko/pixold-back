@@ -63,6 +63,6 @@ export class WalletController {
   @UseGuards(PixoldAuthGuard)
   @Get()
   async getWallet(@CurrentUser() { uid }: any) {
-    return this.coinDomain.getWallet(uid);
+    return this.coinDomain.getWallet(uid, true);
   }
 }

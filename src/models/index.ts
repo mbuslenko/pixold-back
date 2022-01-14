@@ -5,3 +5,4 @@ export * from './faq-topics.entity';
 export * from './stellar-accounts.entity';
 export * from './miner-pixel.entity';
 export * from './attack-pixel.entity';
+export * from './defender-pixel.entity';
