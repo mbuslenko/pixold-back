@@ -12,6 +12,7 @@ import { AttackPixelRepository } from '../persistance/types/attack-pixel.reposit
 import { MinerPixelRepository } from '../persistance/types/miner-pixel.repository';
 import { DefenderPixelRepository } from '../persistance/types/defender-pixel.repository';
 import { EventsGateway } from '../../../events/events.gateway';
+import { PixelTypes } from '../../../common/consts/pixel-types.type';
 
 @Injectable()
 export class GameService {
@@ -56,12 +57,7 @@ export class GameService {
       where: { numericId: props.to },
     });
 
-    const attackedHexagons: {
-      numericId: number;
-      type: string;
-      xCoordinate: number;
-      yCoordinate: number;
-    }[] = await this.pixelRepository.find({
+    const attackedHexagons: GameService.PixelInfo[] = await this.pixelRepository.find({
       select: ['numericId', 'type', 'xCoordinate', 'yCoordinate'],
       where: { ownerId: attackedPixel.ownerId },
     });
@@ -125,20 +121,20 @@ export class GameService {
     const finalTimeForAttack = timeForAttackInSeconds - (end - start);
 
     if (finalTimeForAttack < 0) {
+      return this.eventsGateway.sendAttackMessage({
+        to: userId,
+        type: 'success',
+        message: `Your previous attack was successfully completed`,
+      });
+    }
+
+    setTimeout(() => {
       this.eventsGateway.sendAttackMessage({
         to: userId,
         type: 'success',
         message: `Your previous attack was successfully completed`,
       });
-    } else {
-      setTimeout(() => {
-        this.eventsGateway.sendAttackMessage({
-          to: userId,
-          type: 'success',
-          message: `Your previous attack was successfully completed`,
-        });
-      }, finalTimeForAttack * 1000);
-    }
+    }, finalTimeForAttack * 1000);
   }
 
   async mine(numericId: number) {
@@ -204,13 +200,8 @@ export class GameService {
   }
 
   findClosestHexagon(
-    from: { xCoordinate: number; yCoordinate: number },
-    arr: {
-      numericId: number;
-      type: string;
-      xCoordinate: number;
-      yCoordinate: number;
-    }[],
+    from: GameService.PixelCoordinates,
+    arr: GameService.PixelInfo[],
   ): number {
     let minDistance = Infinity;
     let closestHexagon = -1;
@@ -228,8 +219,8 @@ export class GameService {
   }
 
   calculateDistance(
-    from: { xCoordinate: number; yCoordinate: number },
-    to: { xCoordinate: number; yCoordinate: number },
+    from: GameService.PixelCoordinates,
+    to: GameService.PixelCoordinates,
   ) {
     const x = from.xCoordinate - to.xCoordinate;
     const y = from.yCoordinate - to.yCoordinate;
@@ -241,5 +232,17 @@ export class GameService {
     return this.minerPixelRepository.query(
       `SELECT SUM(coinsInStorage) FROM miner_pixels WHERE ownerId = '${userId}'`,
     );
+  }
+}
+
+export namespace GameService {
+  export interface PixelInfo extends PixelCoordinates {
+    numericId: number;
+    type: PixelTypes;
+  }
+
+  export interface PixelCoordinates {
+    xCoordinate: number;
+    yCoordinate: number;
   }
 }

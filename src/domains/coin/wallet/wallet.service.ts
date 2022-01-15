@@ -63,9 +63,9 @@ export class WalletService {
     if (!wallet) {
       if (throwError) {
         throw new HttpException({ message: 'Wallet not found' }, 400);
-      } else {
-        return null;
       }
+
+      return null;
     }
 
     return {

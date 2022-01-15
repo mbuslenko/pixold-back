@@ -42,7 +42,7 @@ export class UserAuthService {
             .digest('hex'),
           lastLogin: new Date(),
           avatarUrl:
-            props.avatarUrl || 'https://api.pixold.xyz/default-avatar.jpg',
+            props.avatarUrl ?? 'https://api.pixold.xyz/default-avatar.jpg',
           ...props,
         }),
       );

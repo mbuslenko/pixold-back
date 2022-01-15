@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Connection } from 'typeorm';
 
 import { PixelLevelsEnum } from '../../../common/consts/level.enum';
+import { PixelTypes } from '../../../common/consts/pixel-types.type';
 import { generateRandomColor } from '../../../common/utils/generate-color';
 import { EventsGateway } from '../../../events/events.gateway';
 
@@ -150,45 +151,45 @@ export class PixelService {
 
   async changeType(
     numericId: number,
-    type: 'attack' | 'miner' | 'defender',
+    type: PixelTypes,
     userId: string,
   ): Promise<void> {
     const row = await this.pixelRepository.findOne({ where: { numericId } });
 
-    if (row.ownerId === userId) {
-      await this.pixelRepository.update({ numericId }, { type });
-
-      // TODO: delete all other rows with this hexagon id
-      switch (type) {
-        case 'attack':
-          await this.attackPixelRepository.save(
-            this.attackPixelRepository.create({
-              numericId,
-              level: PixelLevelsEnum.STARTER,
-            }),
-          );
-          break;
-        case 'miner':
-          await this.minerPixelRepository.save(
-            this.minerPixelRepository.create({
-              numericId,
-              level: PixelLevelsEnum.STARTER,
-            }),
-          );
-          break;
-        case 'defender':
-          await this.defenderPixelRepository.save(
-            this.defenderPixelRepository.create({
-              numericId,
-              level: PixelLevelsEnum.STARTER,
-            }),
-          );
-          break;
-      }
-    } else {
+    if (row.ownerId !== userId) {
       throw new BadRequestException({
         message: 'You can not change type of other user hexagon',
       });
+    }
+
+    await this.pixelRepository.update({ numericId }, { type });
+
+    // TODO: delete all other rows with this hexagon id
+    switch (type) {
+      case 'attack':
+        await this.attackPixelRepository.save(
+          this.attackPixelRepository.create({
+            numericId,
+            level: PixelLevelsEnum.STARTER,
+          }),
+        );
+        break;
+      case 'miner':
+        await this.minerPixelRepository.save(
+          this.minerPixelRepository.create({
+            numericId,
+            level: PixelLevelsEnum.STARTER,
+          }),
+        );
+        break;
+      case 'defender':
+        await this.defenderPixelRepository.save(
+          this.defenderPixelRepository.create({
+            numericId,
+            level: PixelLevelsEnum.STARTER,
+          }),
+        );
+        break;
     }
   }
 
@@ -244,7 +245,7 @@ export class PixelService {
     return {
       type: hexagonRow.type,
       level: typeRow.level,
-      coinsInStorage: typeRow.coinsInStorage || null,
+      coinsInStorage: typeRow.coinsInStorage ?? null,
       owner: ownerUsername,
       canAttack: hexagonRow.ownerId !== userId,
       coinsToUpgrade: await this.getAmountOfCoinsToUpgrade(
@@ -269,7 +270,7 @@ export class PixelService {
 
 export namespace PixelService {
   export interface HexagonInfo {
-    type: 'attack' | 'miner' | 'defender' | 'without';
+    type: PixelTypes;
     level: PixelLevelsEnum;
     coinsInStorage: number;
     owner: string;
