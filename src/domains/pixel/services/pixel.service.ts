@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { throws } from 'assert';
 import { Connection } from 'typeorm';
 
 import { PixelLevelsEnum } from '../../../common/consts/level.enum';
@@ -162,9 +163,8 @@ export class PixelService {
       });
     }
 
-    await this.pixelRepository.update({ numericId }, { type });
+    await this.pixelRepository.clearTypeForHexagon(numericId);
 
-    // TODO: delete all other rows with this hexagon id
     switch (type) {
       case 'attack':
         await this.attackPixelRepository.save(
@@ -191,6 +191,8 @@ export class PixelService {
         );
         break;
     }
+
+    await this.pixelRepository.update({ numericId }, { type });
   }
 
   async getHexagonInfo(
@@ -265,6 +267,81 @@ export class PixelService {
       purchaseLink:
         'https://opensea.io/assets/matic/0x2953399124f0cbb46d2cbacd8a89cf0599974963/53812526196032344565437183040714628674999174739090954850032801003187019448321',
     };
+  }
+
+  async upgradeHexagon(userId: string, numericId: number): Promise<void> {
+    const hexagonRow = await this.pixelRepository.findOne({
+      where: { numericId },
+    });
+
+    let typeRow;
+    switch (hexagonRow.type) {
+      case 'miner':
+        typeRow = await this.minerPixelRepository.findOne({
+          where: { numericId },
+        });
+        break;
+      case 'attack':
+        typeRow = await this.attackPixelRepository.findOne({
+          where: { numericId },
+        });
+        break;
+      case 'defender':
+        typeRow = await this.defenderPixelRepository.findOne({
+          where: { numericId },
+        });
+        break;
+      case 'without':
+        throw new BadRequestException({
+          message: 'You can not upgrade hexagon without type',
+        });
+    }
+
+    const coinsToUpgrade = await this.getAmountOfCoinsToUpgrade(
+      hexagonRow.type,
+      typeRow.level,
+    );
+
+    await this.coinDomain.substractCoinsFromUserBalance(userId, coinsToUpgrade);
+
+    let newLevel;
+
+    switch (typeRow.level) {
+      case PixelLevelsEnum.STARTER:
+        newLevel = PixelLevelsEnum.MIDDLE;
+        break;
+      case PixelLevelsEnum.MIDDLE:
+        newLevel = PixelLevelsEnum.PRO;
+        break;
+      case PixelLevelsEnum.PRO:
+        newLevel = PixelLevelsEnum.PRO;
+        break;
+      case PixelLevelsEnum.SUPREME:
+        throw new BadRequestException({
+          message: 'You are already at the maximum level of the hexagon',
+        });
+    }
+
+    switch (hexagonRow.type) {
+      case 'miner':
+        await this.minerPixelRepository.update(
+          { numericId },
+          { level: newLevel },
+        );
+        break;
+      case 'attack':
+        await this.attackPixelRepository.update(
+          { numericId },
+          { level: newLevel },
+        );
+        break;
+      case 'defender':
+        await this.defenderPixelRepository.update(
+          { numericId },
+          { level: newLevel },
+        );
+        break;
+    }
   }
 }
 

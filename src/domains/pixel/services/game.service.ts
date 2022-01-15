@@ -1,18 +1,19 @@
-import { performance } from 'perf_hooks';
 import { Injectable } from '@nestjs/common';
+import { performance } from 'perf_hooks';
+import { Connection } from 'typeorm';
 
 import { AttackHexagonDto } from '../../../api/pixel/dto/pixel.dto';
 import { PixelLevelsEnum } from '../../../common/consts/level.enum';
 import { sendNotification } from '../../../common/utils/telegram-notifications';
+import { PixelTypes } from '../../../common/consts/pixel-types.type';
 
 import { CoinDomain } from '../../coin/coin.domain';
+import { EventsGateway } from '../../../events/events.gateway';
 
 import { PixelRepository } from '../persistance/pixel.repository';
 import { AttackPixelRepository } from '../persistance/types/attack-pixel.repository';
 import { MinerPixelRepository } from '../persistance/types/miner-pixel.repository';
 import { DefenderPixelRepository } from '../persistance/types/defender-pixel.repository';
-import { EventsGateway } from '../../../events/events.gateway';
-import { PixelTypes } from '../../../common/consts/pixel-types.type';
 
 @Injectable()
 export class GameService {
@@ -23,8 +24,9 @@ export class GameService {
     private readonly defenderPixelRepository: DefenderPixelRepository,
 
     private readonly coinDomain: CoinDomain,
-
     private readonly eventsGateway: EventsGateway,
+
+    private readonly connection: Connection,
   ) {}
 
   async miningCron(): Promise<void> {
@@ -40,6 +42,7 @@ export class GameService {
     );
   }
 
+  // TODO: Refactor this function to reduce its Cognitive Complexity from 86 to the 15 allowed. [+27 locations]
   async attackHexagon(userId: string, props: AttackHexagonDto): Promise<void> {
     // TODO: change to transaction
 
@@ -57,10 +60,11 @@ export class GameService {
       where: { numericId: props.to },
     });
 
-    const attackedHexagons: GameService.PixelInfo[] = await this.pixelRepository.find({
-      select: ['numericId', 'type', 'xCoordinate', 'yCoordinate'],
-      where: { ownerId: attackedPixel.ownerId },
-    });
+    const attackedHexagons: GameService.PixelInfo[] =
+      await this.pixelRepository.find({
+        select: ['numericId', 'type', 'xCoordinate', 'yCoordinate'],
+        where: { ownerId: attackedPixel.ownerId },
+      });
 
     const closestHexagonId = this.findClosestHexagon(
       {
@@ -75,17 +79,154 @@ export class GameService {
     });
 
     const distance = this.calculateDistance(attackerPixel, closestHexagonRow);
-
-    const { sum: coinsInStorage } = await this.getAllCoinsInUsersStorages(
-      attackerPixel.ownerId,
-    );
     const hexagonsNumber = attackedHexagons.length;
 
     let percentRobbed = 0;
     let timeForAttackInSeconds = distance * 2;
+    let attackSuccess = false;
 
+    // TODO: refactor if & switch cases
     if (closestHexagonRow.type === 'defender') {
-      // TODO: add logic for defender
+      const defenderRow = await this.defenderPixelRepository.findOne({
+        where: { numericId: closestHexagonId },
+      });
+
+      switch (attackerRow.level) {
+        case PixelLevelsEnum.STARTER:
+          percentRobbed = Math.floor(Math.random() * 15) + 15;
+
+          switch (defenderRow.level) {
+            case PixelLevelsEnum.STARTER:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 5 * 60;
+
+              // with 30% chance set attack success to true
+              if (Math.random() * 100 < 50) {
+                attackSuccess = true;
+              }
+              break;
+            case PixelLevelsEnum.MIDDLE:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 10 * 60;
+
+              if (Math.random() * 100 < 30) {
+                attackSuccess = true;
+              }
+              break;
+            case PixelLevelsEnum.PRO:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 15 * 60;
+
+              if (Math.random() * 100 < 10) {
+                attackSuccess = true;
+              }
+              break;
+            case PixelLevelsEnum.SUPREME:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 25 * 60;
+
+              if (Math.random() * 100 < 2) {
+                attackSuccess = true;
+              }
+          }
+          break;
+        case PixelLevelsEnum.MIDDLE:
+          percentRobbed = Math.floor(Math.random() * 20) + 30;
+
+          switch (defenderRow.level) {
+            case PixelLevelsEnum.STARTER:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 2 * 60;
+
+              if (Math.random() * 100 < 70) {
+                attackSuccess = true;
+              }
+              break;
+            case PixelLevelsEnum.MIDDLE:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 5 * 60;
+
+              if (Math.random() * 100 < 50) {
+                attackSuccess = true;
+              }
+              break;
+            case PixelLevelsEnum.PRO:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 10 * 60;
+
+              if (Math.random() * 100 < 30) {
+                attackSuccess = true;
+              }
+              break;
+            case PixelLevelsEnum.SUPREME:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 15 * 60;
+
+              if (Math.random() * 100 < 10) {
+                attackSuccess = true;
+              }
+          }
+          break;
+
+        case PixelLevelsEnum.PRO:
+          percentRobbed = Math.floor(Math.random() * 30) + 50;
+
+          switch (defenderRow.level) {
+            case PixelLevelsEnum.STARTER:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 1 * 60;
+
+              if (Math.random() * 100 < 90) {
+                attackSuccess = true;
+              }
+              break;
+            case PixelLevelsEnum.MIDDLE:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 2 * 60;
+
+              if (Math.random() * 100 < 70) {
+                attackSuccess = true;
+              }
+              break;
+            case PixelLevelsEnum.PRO:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 5 * 60;
+
+              if (Math.random() * 100 < 50) {
+                attackSuccess = true;
+              }
+              break;
+            case PixelLevelsEnum.SUPREME:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 10 * 60;
+
+              if (Math.random() * 100 < 30) {
+                attackSuccess = true;
+              }
+          }
+          break;
+
+        case PixelLevelsEnum.SUPREME:
+          percentRobbed = Math.floor(Math.random() * 50) + 75;
+
+          switch (defenderRow.level) {
+            case PixelLevelsEnum.STARTER:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 1 * 60;
+
+              if (Math.random() * 100 < 95) {
+                attackSuccess = true;
+              }
+              break;
+            case PixelLevelsEnum.MIDDLE:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 1 * 60;
+
+              if (Math.random() * 100 < 85) {
+                attackSuccess = true;
+              }
+              break;
+            case PixelLevelsEnum.PRO:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 1 * 60;
+
+              if (Math.random() * 100 < 70) {
+                attackSuccess = true;
+              }
+              break;
+            case PixelLevelsEnum.SUPREME:
+              timeForAttackInSeconds += hexagonsNumber * 60 + 1 * 60;
+
+              if (Math.random() * 100 < 50) {
+                attackSuccess = true;
+              }
+          }
+      }
     } else {
       switch (attackerRow.level) {
         case PixelLevelsEnum.STARTER:
@@ -108,31 +249,57 @@ export class GameService {
       }
     }
 
-    // todo: what if there are no coins in storage?
+    const coinsSubstracted =
+      await this.minerPixelRepository.getSubstractedCoinsNumber(
+        attackedPixel.ownerId,
+        percentRobbed,
+      );
+
     await this.minerPixelRepository.substractCoinsFromStorages(
       attackedPixel.ownerId,
       percentRobbed,
     );
 
-    // TODO: send coins to the robber
+    await this.coinDomain.sendCoinsToUser(
+      attackerPixel.ownerId,
+      coinsSubstracted,
+    );
 
     const end = performance.now();
 
     const finalTimeForAttack = timeForAttackInSeconds - (end - start);
 
     if (finalTimeForAttack < 0) {
+      if (attackSuccess === true) {
+        return this.eventsGateway.sendAttackMessage({
+          to: userId,
+          type: 'success',
+          message: `Your previous attack was successfully completed`,
+        });
+      }
+
       return this.eventsGateway.sendAttackMessage({
         to: userId,
-        type: 'success',
-        message: `Your previous attack was successfully completed`,
+        type: 'alert',
+        message: `Your previous attack was failed`,
       });
+    }
+
+    if (attackSuccess === true) {
+      setTimeout(() => {
+        this.eventsGateway.sendAttackMessage({
+          to: userId,
+          type: 'success',
+          message: `Your previous attack was successfully completed`,
+        });
+      }, finalTimeForAttack * 1000);
     }
 
     setTimeout(() => {
       this.eventsGateway.sendAttackMessage({
         to: userId,
-        type: 'success',
-        message: `Your previous attack was successfully completed`,
+        type: 'alert',
+        message: `Your previous attack was failed`,
       });
     }, finalTimeForAttack * 1000);
   }
@@ -168,7 +335,7 @@ export class GameService {
       const check = await this.checkIfThereAreEnoughCoins(minedCoins);
 
       if (check) {
-        // TODO: make balance change for pixold account
+        await this.coinDomain.substractCoinsFromPixoldBalance(minedCoins);
 
         await this.minerPixelRepository.update(
           { numericId },

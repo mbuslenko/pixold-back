@@ -26,4 +26,16 @@ export class CoinDomain {
   async getAmountInCoins(amountInUsd: number) {
     return this.coinService.getAmountInCoins(amountInUsd);
   }
+
+  async sendCoinsToUser(userId: string, coins: number) {
+    return this.walletService.sendCoinsToUser(userId, coins);
+  }
+
+  async substractCoinsFromPixoldBalance(coins: number) {
+    return this.walletService.substractCoinsFromPixoldBalance(coins);
+  }
+
+  async substractCoinsFromUserBalance(userId: string, coins: number) {
+    return this.walletService.substractCoinsFromUserBalance(userId, coins);
+  }
 }

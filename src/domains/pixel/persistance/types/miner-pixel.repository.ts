@@ -3,7 +3,10 @@ import { MinerPixelEntity } from '../../../../models/miner-pixel.entity';
 
 @EntityRepository(MinerPixelEntity)
 export class MinerPixelRepository extends Repository<MinerPixelEntity> {
-  async substractCoinsFromStorages(userId: string, percent: number): Promise<void> {
+  async substractCoinsFromStorages(
+    userId: string,
+    percent: number,
+  ): Promise<void> {
     return this.query(`
     UPDATE miner_pixel
     SET coins_in_storage = (
@@ -15,6 +18,20 @@ export class MinerPixelRepository extends Repository<MinerPixelEntity> {
     JOIN pixel
     ON pixel.numeric_id = miner_pixel.numeric_id
     WHERE pixel.owner_id = '${userId}'
-    `)
+    `);
+  }
+
+  async getSubstractedCoinsNumber(
+    userId: string,
+    percent: number,
+  ): Promise<number> {
+    return this.query(`
+    SELECT 
+      (coins_in_storage * ${percent} / 100)
+    FROM miner_pixel
+    JOIN pixel
+    ON pixel.numeric_id = miner_pixel.numeric_id
+    WHERE pixel.owner_id = '${userId}'
+    `);
   }
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AttackHexagonDto } from '../../api/pixel/dto/pixel.dto';
 import { GameService } from './services/game.service';
 
 import { PixelService } from './services/pixel.service';
@@ -36,5 +37,13 @@ export class PixelDomain {
 
   async getRandomFreeHexagon() {
     return this.pixelService.getRandomFreeHexagon();
+  }
+
+  async attackHexagon(userId: string, props: AttackHexagonDto) {
+    return this.gameService.attackHexagon(userId, props);
+  }
+
+  async upgradeHexagon(userId: string, numericId: number) {
+    return this.pixelService.upgradeHexagon(userId, numericId);
   }
 }

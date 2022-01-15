@@ -22,4 +22,30 @@ export class PixelRepository extends Repository<PixelEntity> {
       LIMIT 1
     `);
   }
+
+  async clearTypeForHexagon(numericId: number) {
+    await this.query(`
+    DELETE FROM
+      miner_pixel
+    WHERE numeric_id = ${numericId}
+    `);
+
+    await this.query(`
+    DELETE FROM
+      attack_pixel
+    WHERE numeric_id = ${numericId}
+    `);
+
+    await this.query(`
+    DELETE FROM
+      defender_pixel
+    WHERE numeric_id = ${numericId}
+    `);
+
+    await this.query(`
+      UPDATE pixel
+      SET type = 'without'
+      WHERE numeric_id = ${numericId}
+    `);
+  }
 }

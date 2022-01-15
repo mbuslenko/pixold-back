@@ -1,10 +1,15 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 import * as stellar from '../../../common/stellar';
 import { accountTypeIsNotSupported } from '../../../common/consts/http-error-messages';
 
 import { WalletRepository } from './persistance/wallet.repository';
 import { ConnectWalletDto } from '../../../api/wallet/dto/wallet.dto';
+import { sendNotification } from '../../../common/utils/telegram-notifications';
 
 @Injectable()
 export class WalletService {
@@ -82,5 +87,89 @@ export class WalletService {
       .then((response) => {
         return response.balanceInPXL;
       });
+  }
+
+  async sendCoinsToUser(userId: string, coins: number): Promise<void> {
+    const [userWallet] = await this.walletRepository.getWallet(userId);
+    const [pixoldWallet] = await this.walletRepository.getWallet('pixold');
+
+    if (!userWallet) {
+      throw new HttpException(
+        { message: `You don't have wallet to send coins` },
+        400,
+      );
+    }
+
+    const newUserBalance = userWallet.balance_in_pxl + coins;
+    const newPixoldBalance = pixoldWallet.balance_in_pxl - coins;
+
+    if (newPixoldBalance < 10000) {
+      sendNotification(
+        `@mbuslenko, @myroslavvv, There are less than 10,000 PXL left on Pixold`,
+      );
+    } else if (newPixoldBalance < 1000) {
+      sendNotification(
+        `@mbuslenko, @myroslavvv, There are less than 1,000 PXL left on Pixold`,
+      );
+    } else if (newPixoldBalance < 0) {
+      throw new InternalServerErrorException({
+        message: `Not enough coins in Pixold`,
+      });
+    }
+
+    await this.walletRepository.update(
+      { id: userWallet.id },
+      { balanceInPXL: newUserBalance },
+    );
+    await this.walletRepository.update(
+      { id: pixoldWallet.id },
+      { balanceInPXL: newPixoldBalance },
+    );
+  }
+
+  async substractCoinsFromPixoldBalance(coins: number): Promise<void> {
+    const [pixoldWallet] = await this.walletRepository.getWallet('pixold');
+
+    const newPixoldBalance = pixoldWallet.balance_in_pxl - coins;
+
+    if (newPixoldBalance < 10000) {
+      sendNotification(
+        `@mbuslenko, @myroslavvv, There are less than 10,000 PXL left on Pixold`,
+      );
+    } else if (newPixoldBalance < 1000) {
+      sendNotification(
+        `@mbuslenko, @myroslavvv, There are less than 1,000 PXL left on Pixold`,
+      );
+    } else if (newPixoldBalance < 0) {
+      throw new InternalServerErrorException({
+        message: `Not enough coins in Pixold`,
+      });
+    }
+
+    await this.walletRepository.update(
+      { id: pixoldWallet.id },
+      { balanceInPXL: newPixoldBalance },
+    );
+  }
+
+  async substractCoinsFromUserBalance(
+    userId: string,
+    coins: number,
+  ): Promise<void> {
+    const [userWallet] = await this.walletRepository.getWallet(userId);
+
+    const newUserBalance = userWallet.balance_in_pxl - coins;
+
+    if (newUserBalance < 0) {
+      throw new HttpException(
+        { message: `Not enough coins in your wallet` },
+        400,
+      );
+    }
+
+    await this.walletRepository.update(
+      { id: userWallet.id },
+      { balanceInPXL: newUserBalance },
+    );
   }
 }

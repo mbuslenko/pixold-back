@@ -22,12 +22,14 @@ import { PixoldAuthGuard } from '../../common/guards/auth.guard';
 
 import { PixelDomain } from '../../domains/pixel/pixel.domain';
 import {
+  AttackHexagonDto,
   ChangeHexagonTypeDto,
   GetAllPixelsOkResponse,
   GetAllPixelsOwnedByUsersOkResponse,
   HexagonInfoOkResponse,
   OneFreeHexagonOkResponse,
   RedeemCodeDto,
+  UpgradeHexagonDto,
 } from './dto/pixel.dto';
 
 @ApiTags('hexagon')
@@ -45,7 +47,9 @@ export class PixelController {
 
   @UseGuards(PixoldAuthGuard)
   @ApiOperation({ summary: 'Get all pixels owned by users' })
-  @ApiHeaders([{ name: 'Authorization', description: 'access tokn', required: true }])
+  @ApiHeaders([
+    { name: 'Authorization', description: 'access tokn', required: true },
+  ])
   @ApiOkResponse({ type: [GetAllPixelsOwnedByUsersOkResponse] })
   @Get('/all/owned')
   async getAllPixelsOwnedByUsers() {
@@ -118,5 +122,43 @@ export class PixelController {
     @Body() body: ChangeHexagonTypeDto,
   ) {
     return this.pixelDomain.changeHexagonType(body.numericId, body.type, uid);
+  }
+
+  @HttpCode(200)
+  @UseGuards(PixoldAuthGuard)
+  @ApiOperation({ summary: 'Attack hexagon' })
+  @ApiBody({ schema: { example: { from: 228, to: 1337 } } })
+  @ApiHeaders([
+    {
+      name: 'Authorization',
+      description: 'access token',
+      required: true,
+    },
+  ])
+  @Post('/attack')
+  async attackHexagon(
+    @CurrentUser() { uid }: any,
+    @Body() body: AttackHexagonDto,
+  ) {
+    return this.pixelDomain.attackHexagon(uid, body);
+  }
+
+  @HttpCode(200)
+  @UseGuards(PixoldAuthGuard)
+  @ApiOperation({ summary: 'Upgrade hexagon' })
+  @ApiBody({ schema: { example: { numericId: 228 } } })
+  @ApiHeaders([
+    {
+      name: 'Authorization',
+      description: 'access token',
+      required: true,
+    },
+  ])
+  @Post('/upgrade')
+  async upgradeHexagon(
+    @CurrentUser() { uid }: any,
+    @Body() body: UpgradeHexagonDto,
+  ) {
+    return this.pixelDomain.upgradeHexagon(uid, body.numericId);
   }
 }

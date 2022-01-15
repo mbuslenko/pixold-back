@@ -82,3 +82,9 @@ export class AttackHexagonDto {
   @IsNotEmpty()
   to: number;
 }
+
+export class UpgradeHexagonDto {
+  @IsNumber()
+  @IsNotEmpty()
+  numericId: number;
+}
