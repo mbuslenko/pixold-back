@@ -309,6 +309,10 @@ export class GameService {
       where: { numericId },
     });
 
+    const { ownerId } = await this.pixelRepository.findOne({
+      where: { numericId },
+    });
+
     let percent = 0;
 
     switch (row.level) {
@@ -335,7 +339,7 @@ export class GameService {
       const check = await this.checkIfThereAreEnoughCoins(minedCoins);
 
       if (check) {
-        await this.coinDomain.substractCoinsFromPixoldBalance(minedCoins);
+        await this.coinDomain.sendCoinsToUser(ownerId, minedCoins);
 
         await this.minerPixelRepository.update(
           { numericId },

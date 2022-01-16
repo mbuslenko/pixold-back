@@ -4,7 +4,7 @@ import { StellarAccountsEntity } from '../../../../models/stellar-accounts.entit
 
 @EntityRepository(StellarAccountsEntity)
 export class WalletRepository extends Repository<StellarAccountsEntity> {
-  async getWallet(userId: string) {
+  async getWallet(userId: string): Promise<WalletRepository.GetWallet[]> {
     return this.query(`
     SELECT 
       SUM(sa.balance_in_xlm) as balance_in_xlm, 
@@ -17,5 +17,14 @@ export class WalletRepository extends Repository<StellarAccountsEntity> {
     WHERE u.id = '${userId}'::uuid
     GROUP BY u.username
     `);
+  }
+}
+
+export namespace WalletRepository {
+  export interface GetWallet {
+    balance_in_xlm: number;
+    balance_in_usd: number;
+    balance_in_pxl: number;
+    username: string;
   }
 }

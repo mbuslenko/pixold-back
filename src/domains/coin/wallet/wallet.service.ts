@@ -10,6 +10,7 @@ import { accountTypeIsNotSupported } from '../../../common/consts/http-error-mes
 import { WalletRepository } from './persistance/wallet.repository';
 import { ConnectWalletDto } from '../../../api/wallet/dto/wallet.dto';
 import { sendNotification } from '../../../common/utils/telegram-notifications';
+import { sendTransactionToPixold, sendTransactionToUser } from '../../../common/stellar/transaction';
 
 @Injectable()
 export class WalletService {
@@ -90,7 +91,9 @@ export class WalletService {
   }
 
   async sendCoinsToUser(userId: string, coins: number): Promise<void> {
-    const [userWallet] = await this.walletRepository.getWallet(userId);
+    const userWallet = await this.walletRepository.findOne({ 
+      where: { ownerId: userId },
+     });
     const [pixoldWallet] = await this.walletRepository.getWallet('pixold');
 
     if (!userWallet) {
@@ -100,7 +103,7 @@ export class WalletService {
       );
     }
 
-    const newUserBalance = userWallet.balance_in_pxl + coins;
+    const newUserBalance = userWallet.balanceInPXL + coins;
     const newPixoldBalance = pixoldWallet.balance_in_pxl - coins;
 
     if (newPixoldBalance < 10000) {
@@ -117,20 +120,24 @@ export class WalletService {
       });
     }
 
+    sendTransactionToUser(userWallet.publicKey, coins.toString());
+
     await this.walletRepository.update(
       { id: userWallet.id },
       { balanceInPXL: newUserBalance },
     );
     await this.walletRepository.update(
-      { id: pixoldWallet.id },
+      { ownerId: 'pixold' },
       { balanceInPXL: newPixoldBalance },
     );
   }
 
   async substractCoinsFromPixoldBalance(coins: number): Promise<void> {
-    const [pixoldWallet] = await this.walletRepository.getWallet('pixold');
+    const pixoldWallet = await this.walletRepository.findOne({
+      where: { ownerId: 'pixold' },
+    });
 
-    const newPixoldBalance = pixoldWallet.balance_in_pxl - coins;
+    const newPixoldBalance = pixoldWallet.balanceInPXL - coins;
 
     if (newPixoldBalance < 10000) {
       sendNotification(
@@ -156,9 +163,11 @@ export class WalletService {
     userId: string,
     coins: number,
   ): Promise<void> {
-    const [userWallet] = await this.walletRepository.getWallet(userId);
+    const userWallet = await this.walletRepository.findOne({
+      where: { ownerId: userId },
+    });
 
-    const newUserBalance = userWallet.balance_in_pxl - coins;
+    const newUserBalance = userWallet.balanceInPXL - coins;
 
     if (newUserBalance < 0) {
       throw new HttpException(
@@ -170,6 +179,43 @@ export class WalletService {
     await this.walletRepository.update(
       { id: userWallet.id },
       { balanceInPXL: newUserBalance },
+    );
+  }
+
+  async sendCoinsToPixold(userId: string, coins: number): Promise<void> {
+    const userWallet = await this.walletRepository.findOne({ 
+      where: { ownerId: userId },
+     });
+    const pixoldWallet = await this.walletRepository.findOne({
+      where: { ownerId: 'pixold' },
+    });
+
+    if (!userWallet) {
+      throw new HttpException(
+        { message: `You don't have wallet to send coins` },
+        400,
+      );
+    }
+
+    const newUserBalance = userWallet.balanceInPXL - coins;
+    const newPixoldBalance = pixoldWallet.balanceInPXL + coins;
+
+    if (newUserBalance < 0) {
+      throw new HttpException(
+        { message: `Not enough coins in your wallet` },
+        400,
+      );
+    }
+
+    sendTransactionToPixold(userWallet.secretKey, coins.toString());
+
+    await this.walletRepository.update(
+      { id: userWallet.id },
+      { balanceInPXL: newUserBalance },
+    );
+    await this.walletRepository.update(
+      { ownerId: 'pixold' },
+      { balanceInPXL: newPixoldBalance },
     );
   }
 }

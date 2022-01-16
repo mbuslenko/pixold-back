@@ -302,7 +302,7 @@ export class PixelService {
       typeRow.level,
     );
 
-    await this.coinDomain.substractCoinsFromUserBalance(userId, coinsToUpgrade);
+    await this.coinDomain.sendCoinsToPixold(userId, coinsToUpgrade);
 
     let newLevel;
 

@@ -31,6 +31,10 @@ export class CoinDomain {
     return this.walletService.sendCoinsToUser(userId, coins);
   }
 
+  async sendCoinsToPixold(userId: string, coins: number) {
+    return this.walletService.sendCoinsToPixold(userId, coins);
+  }
+
   async substractCoinsFromPixoldBalance(coins: number) {
     return this.walletService.substractCoinsFromPixoldBalance(coins);
   }
