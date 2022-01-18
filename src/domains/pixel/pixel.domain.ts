@@ -46,4 +46,8 @@ export class PixelDomain {
   async upgradeHexagon(userId: string, numericId: number) {
     return this.pixelService.upgradeHexagon(userId, numericId);
   }
+
+  async buyHexagon(userId: string, numericId: number) {
+    return this.pixelService.buyHexagon(userId, numericId);
+  }
 }

@@ -161,4 +161,9 @@ export class PixelController {
   ) {
     return this.pixelDomain.upgradeHexagon(uid, body.numericId);
   }
+
+  @Post('/buy')
+  async buyHexagon(@Body() body: any) {
+    return this.pixelDomain.buyHexagon(body.userId, body.numericId);
+  }
 }

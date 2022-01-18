@@ -29,6 +29,11 @@ export class PixelService {
     private readonly defenderPixelRepository: DefenderPixelRepository,
   ) {}
 
+  // TESTING PURPOSES ONLY
+  async buyHexagon(userId: string, numericId: number) {
+    return this.pixelRepository.update({ numericId }, { ownerId: userId });
+  }
+
   async getAllPixelsOwnedByUsers(): Promise<PixelService.GetAllPixelsResponse> {
     const owners = await this.pixelRepository.getOwnersList();
 
