@@ -25,7 +25,7 @@ export class FaqService {
     await Promise.all(
       topics.map(async (topic) => {
         topic.content = await this.faqContentRepository.find({
-          select: ['answer', 'question'],
+          select: ['id', 'answer', 'question'],
           where: { topicId: topic.id },
         });
       }),

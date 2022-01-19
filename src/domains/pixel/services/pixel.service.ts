@@ -34,10 +34,10 @@ export class PixelService {
     return this.pixelRepository.update({ numericId }, { ownerId: userId });
   }
 
-  async getAllPixelsOwnedByUsers(): Promise<PixelService.GetAllPixelsResponse> {
+  async getAllPixelsOwnedByUsers(): Promise<PixelService.GetAllPixelsResponse[]> {
     const owners = await this.pixelRepository.getOwnersList();
 
-    const result = {};
+    const result = [];
 
     await Promise.all(
       owners.map(async (ownerId) => {
@@ -53,7 +53,9 @@ export class PixelService {
 
               const numericIds = ownersPixels.map((el) => el.numeric_id);
 
-              result[username] = numericIds;
+              result.push({
+                [username]: numericIds,
+              })
             }
           },
         );

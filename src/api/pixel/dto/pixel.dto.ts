@@ -14,8 +14,8 @@ export class GetAllPixelsOkResponse {
 }
 
 export class GetAllPixelsOwnedByUsersOkResponse {
-  @ApiProperty()
-  username: number;
+  @ApiProperty({ type: Array })
+  username: number[];
 }
 
 export class RedeemCodeDto {
