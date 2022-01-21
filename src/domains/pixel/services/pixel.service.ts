@@ -54,7 +54,8 @@ export class PixelService {
               const numericIds = ownersPixels.map((el) => el.numeric_id);
 
               result.push({
-                [username]: numericIds,
+                username,
+                numericIds,
               })
             }
           },
