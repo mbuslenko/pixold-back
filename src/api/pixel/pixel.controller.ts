@@ -29,7 +29,7 @@ import {
   HexagonInfoOkResponse,
   OneFreeHexagonOkResponse,
   RedeemCodeDto,
-  UpgradeHexagonDto,
+  OneHexagonDto,
 } from './dto/pixel.dto';
 
 @ApiTags('hexagon')
@@ -158,7 +158,7 @@ export class PixelController {
   @Post('/upgrade')
   async upgradeHexagon(
     @CurrentUser() { uid }: any,
-    @Body() body: UpgradeHexagonDto,
+    @Body() body: OneHexagonDto,
   ) {
     return this.pixelDomain.upgradeHexagon(uid, body.numericId);
   }
@@ -166,5 +166,21 @@ export class PixelController {
   @Post('/buy')
   async buyHexagon(@Body() body: any) {
     return this.pixelDomain.buyHexagon(body.userId, body.numericId);
+  }
+
+  @HttpCode(200)
+  @UseGuards(PixoldAuthGuard)
+  @ApiOperation({ summary: 'Send coins from hexagon to wallet' })
+  @ApiBody({ schema: { example: { numericId: 228 } } })
+  @ApiHeaders([
+    {
+      name: 'Authorization',
+      description: 'access token',
+      required: true,
+    },
+  ])
+  @Post('/send-coins')
+  async sendCoins(@CurrentUser() { uid }: any, @Body() body: OneHexagonDto) {
+    return this.pixelDomain.sendCoinsFromMinerToWallet(body.numericId, uid);
   }
 }

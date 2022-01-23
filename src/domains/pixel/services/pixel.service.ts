@@ -351,6 +351,40 @@ export class PixelService {
         break;
     }
   }
+
+  async sendCoinsFromMinerToWallet(numericId: number, userId: string): Promise<void> {
+    const minerPixelRow = await this.minerPixelRepository.findOne({
+      where: { numericId },
+    });
+
+    if (!minerPixelRow) {
+      throw new BadRequestException({
+        message: 'Miner hexagon was not found',
+      })
+    }
+
+    const coinsInStorage = minerPixelRow.coinsInStorage;
+
+    const { ownerId } = await this.pixelRepository.findOne({
+      where: { numericId },
+    })
+
+    if (ownerId !== userId) {
+      throw new BadRequestException({
+        message: 'You can not send coins from hexagon that is not yours',
+      })
+    }
+
+    await this.minerPixelRepository.update(
+      { numericId },
+      { coinsInStorage: 0 },
+    );
+
+    await this.coinDomain.sendCoinsToUser(
+      ownerId,
+      coinsInStorage,
+    );
+  }
 }
 
 export namespace PixelService {

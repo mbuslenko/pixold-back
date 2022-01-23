@@ -50,4 +50,8 @@ export class PixelDomain {
   async buyHexagon(userId: string, numericId: number) {
     return this.pixelService.buyHexagon(userId, numericId);
   }
+
+  async sendCoinsFromMinerToWallet(numericId: number, userId: string) {
+    return this.pixelService.sendCoinsFromMinerToWallet(numericId, userId);
+  }
 }
