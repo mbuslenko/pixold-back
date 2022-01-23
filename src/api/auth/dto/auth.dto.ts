@@ -40,5 +40,8 @@ export class AuthResponseDto {
   updateUsername: boolean;
 
   @ApiProperty()
+  username: string;
+
+  @ApiProperty()
   wallet: GetWalletOkResponse | null;
 }

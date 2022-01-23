@@ -64,6 +64,7 @@ export class UserAuthService {
         user.id + '$' + generateToken(user.email, user.accessToken),
       ),
       updateUsername,
+      username: user.username,
       wallet: await this.coinDomain.getWallet(user.id, false),
     };
   }
