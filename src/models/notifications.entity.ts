@@ -1,6 +1,7 @@
-import { Column } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { PixoldBaseEntity } from '../common/db/base-entity';
 
+@Entity({ name: 'notifications' })
 export class NotificationsEntity extends PixoldBaseEntity<NotificationsEntity> {
   @Column()
   userId: string;
