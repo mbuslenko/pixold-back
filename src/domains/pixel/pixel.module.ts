@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventsModule } from '../../events/events.module';
 import { CoinModule } from '../coin/coin.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 import { UserModule } from '../user/user.module';
 
 import { PixelRepository } from './persistance/pixel.repository';
@@ -25,6 +26,7 @@ import { PixelSyncService } from './services/pixel.sync.service';
     CoinModule,
     UserModule,
     EventsModule,
+    NotificationsModule,
   ],
   providers: [PixelDomain, PixelService, PixelSyncService, GameService],
   exports: [PixelDomain],

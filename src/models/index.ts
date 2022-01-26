@@ -6,3 +6,4 @@ export * from './stellar-accounts.entity';
 export * from './miner-pixel.entity';
 export * from './attack-pixel.entity';
 export * from './defender-pixel.entity';
+export * from './notifications.entity';

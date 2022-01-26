@@ -10,7 +10,7 @@
     "build": "tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "dev": "rimraf build && tsc-watch --noClear -p tsconfig.build.json --onSuccess \"node --inspect=0.0.0.0:9235 dist/main.js\" | uk-log",
-    "migrate:generate": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:generate -n ",
+    "migrate:generate": "./node_modules/.bin/ts-node ./node_modules/typeorm/cli.js migration:generate -n ",
     "migrate:empty:generate": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:create -n ",
     "migrate:run": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:run",
     "migrate:revert": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert",
