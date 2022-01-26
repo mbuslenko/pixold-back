@@ -5,9 +5,9 @@ import { Connection } from 'typeorm';
 import { PixelLevelsEnum } from '../../../common/consts/level.enum';
 import { PixelTypes } from '../../../common/consts/pixel-types.type';
 import { generateRandomColor } from '../../../common/utils/generate-color';
-import { EventsGateway } from '../../../events/events.gateway';
 
 import { CoinDomain } from '../../coin/coin.domain';
+import { NotificationsDomain } from '../../notifications/notifications.domain';
 import { UserDomain } from '../../user/user.domain';
 
 import { PixelRepository } from '../persistance/pixel.repository';
@@ -23,18 +23,21 @@ export class PixelService {
     private readonly pixelRepository: PixelRepository,
     private readonly coinDomain: CoinDomain,
     private readonly userDomain: UserDomain,
+    private readonly notificationsDomain: NotificationsDomain,
 
     private readonly minerPixelRepository: MinerPixelRepository,
     private readonly attackPixelRepository: AttackPixelRepository,
     private readonly defenderPixelRepository: DefenderPixelRepository,
   ) {}
 
-  // TESTING PURPOSES ONLY
+  // ! TESTING PURPOSES ONLY
   async buyHexagon(userId: string, numericId: number) {
     return this.pixelRepository.update({ numericId }, { ownerId: userId });
   }
 
-  async getAllPixelsOwnedByUsers(): Promise<PixelService.GetAllPixelsResponse[]> {
+  async getAllPixelsOwnedByUsers(): Promise<
+    PixelService.GetAllPixelsResponse[]
+  > {
     const owners = await this.pixelRepository.getOwnersList();
 
     const result = [];
@@ -56,7 +59,7 @@ export class PixelService {
               result.push({
                 username,
                 numericIds,
-              })
+              });
             }
           },
         );
@@ -223,6 +226,10 @@ export class PixelService {
         owner: 'pixold',
         canAttack: false,
         coinsToUpgrade: 0,
+        isNotSubscribedOnNotifications: {
+          isAttacked: null,
+          fullStorage: null,
+        },
       };
     }
 
@@ -262,6 +269,16 @@ export class PixelService {
         hexagonRow.type,
         typeRow.level,
       ),
+      isNotSubscribedOnNotifications: {
+        isAttacked: await this.notificationsDomain.checkIsNotSubscribed(
+          userId,
+          'is-attacked',
+        ),
+        fullStorage: await this.notificationsDomain.checkIsNotSubscribed(
+          userId,
+          'full-storage',
+        ),
+      },
     };
   }
 
@@ -352,7 +369,10 @@ export class PixelService {
     }
   }
 
-  async sendCoinsFromMinerToWallet(numericId: number, userId: string): Promise<void> {
+  async sendCoinsFromMinerToWallet(
+    numericId: number,
+    userId: string,
+  ): Promise<void> {
     const minerPixelRow = await this.minerPixelRepository.findOne({
       where: { numericId },
     });
@@ -360,19 +380,19 @@ export class PixelService {
     if (!minerPixelRow) {
       throw new BadRequestException({
         message: 'Miner hexagon was not found',
-      })
+      });
     }
 
     const coinsInStorage = minerPixelRow.coinsInStorage;
 
     const { ownerId } = await this.pixelRepository.findOne({
       where: { numericId },
-    })
+    });
 
     if (ownerId !== userId) {
       throw new BadRequestException({
         message: 'You can not send coins from hexagon that is not yours',
-      })
+      });
     }
 
     await this.minerPixelRepository.update(
@@ -380,10 +400,7 @@ export class PixelService {
       { coinsInStorage: 0 },
     );
 
-    await this.coinDomain.sendCoinsToUser(
-      ownerId,
-      coinsInStorage,
-    );
+    await this.coinDomain.sendCoinsToUser(ownerId, coinsInStorage);
   }
 }
 
@@ -395,6 +412,10 @@ export namespace PixelService {
     owner: string;
     canAttack: boolean;
     coinsToUpgrade: number;
+    isNotSubscribedOnNotifications: {
+      isAttacked: boolean;
+      fullStorage: boolean;
+    };
   }
 
   export interface GetAllPixelsResponse {

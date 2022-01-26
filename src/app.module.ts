@@ -16,6 +16,7 @@ import { PixelModule } from './domains/pixel/pixel.module';
 import { FaqModule } from './domains/faq/faq.module';
 import { CoinModule } from './domains/coin/coin.module';
 import { EventsModule } from './events/events.module';
+import { NotificationsModule } from './domains/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { EventsModule } from './events/events.module';
     FaqModule,
     CoinModule,
     EventsModule,
+    NotificationsModule,
   ],
   controllers: [
     api.UserController,
@@ -38,6 +40,7 @@ import { EventsModule } from './events/events.module';
     api.WalletController,
     api.AuthController,
     api.PixelController,
+    api.NotifcationsController,
   ],
   providers: [
     // {

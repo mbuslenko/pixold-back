@@ -6,3 +6,4 @@ export * from './scripts/1640681876921-addMierPixelsEntity';
 export * from './scripts/1641930069281-addUniqueFieldToPixelEntity';
 export * from './scripts/1642153283456-addAttackPixelEntity';
 export * from './scripts/1642181308520-addDefenderPixelEntity';
+export * from './scripts/1643228165302-addNotificationsEntity';
