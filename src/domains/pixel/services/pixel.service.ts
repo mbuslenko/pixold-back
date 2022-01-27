@@ -190,6 +190,7 @@ export class PixelService {
           this.minerPixelRepository.create({
             numericId,
             level: PixelLevelsEnum.STARTER,
+            coinsInStorage: 0,
           }),
         );
         break;
