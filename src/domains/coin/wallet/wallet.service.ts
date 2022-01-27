@@ -127,7 +127,7 @@ export class WalletService {
       { balanceInPXL: newUserBalance },
     );
     await this.walletRepository.update(
-      { ownerId: 'pixold' },
+      { ownerId: '6370046c-ac93-4d19-a55f-c59c5d5211b3' },
       { balanceInPXL: newPixoldBalance },
     );
   }
@@ -214,7 +214,7 @@ export class WalletService {
       { balanceInPXL: newUserBalance },
     );
     await this.walletRepository.update(
-      { ownerId: 'pixold' },
+      { ownerId: '6370046c-ac93-4d19-a55f-c59c5d5211b3' },
       { balanceInPXL: newPixoldBalance },
     );
   }
