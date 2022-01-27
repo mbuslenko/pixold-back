@@ -29,6 +29,6 @@ export class UserRepository extends Repository<UserEntity> {
       lastName: result[0].last_name,
       avatarUrl: result[0].avatar_url,
       wallet: result[0].public_key,
-    }
+    };
   }
 }

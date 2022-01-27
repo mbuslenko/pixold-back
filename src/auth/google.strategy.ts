@@ -6,9 +6,7 @@ import { GOOGLE_CLIENT_ID, GOOGLE_SECRET } from '../config';
 import { UserDomain } from '../domains/user/user.domain';
 
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(
-      private readonly userDomain: UserDomain,
-  ) {
+  constructor(private readonly userDomain: UserDomain) {
     super({
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_SECRET,
@@ -33,6 +31,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       accessToken,
     };
 
-    done(null, user)
+    done(null, user);
   }
 }

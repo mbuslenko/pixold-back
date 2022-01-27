@@ -6,9 +6,7 @@ import { FaqService } from './services/faq.service';
 
 @Injectable()
 export class FaqDomain {
-  constructor(
-    private readonly faqService: FaqService,
-  ) {}
+  constructor(private readonly faqService: FaqService) {}
 
   async getAllContent() {
     return this.faqService.getAllContent();

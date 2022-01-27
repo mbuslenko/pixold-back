@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class addPixelsAndFaqEntities1640108657277 implements MigrationInterface {
+export class addPixelsAndFaqEntities1640108657277
+  implements MigrationInterface
+{
   name = 'addPixelsAndFaqEntities1640108657277';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

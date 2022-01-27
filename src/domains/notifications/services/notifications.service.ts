@@ -8,10 +8,15 @@ export class NotificationsService {
   ) {}
 
   // TODO: change notificationType to UNION
-  async subscribeToNotifications(userId: string, notificationType: string) {
+  async subscribeToNotifications(
+    userId: string,
+    notificationType: string,
+    subscribe: boolean,
+  ) {
     return this.notificationsRepository.subscribeToNotifications(
       userId,
       notificationType,
+      subscribe,
     );
   }
 

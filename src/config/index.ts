@@ -1,8 +1,7 @@
-
 import { loadConfig } from '../common/utils/load-config';
 import { EnvDto } from './env.dto';
 
-const config = loadConfig<EnvDto>(EnvDto)
+const config = loadConfig<EnvDto>(EnvDto);
 
 const {
   NODE_ENV,

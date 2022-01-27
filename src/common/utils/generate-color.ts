@@ -5,5 +5,5 @@ export const generateRandomColor = () => {
     color += characters[Math.floor(Math.random() * 16)];
   }
 
-  return color
-}
+  return color;
+};

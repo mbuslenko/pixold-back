@@ -5,10 +5,15 @@ import { NotificationsService } from './services/notifications.service';
 export class NotificationsDomain {
   constructor(private readonly notificationsService: NotificationsService) {}
 
-  async subscribeToNotifications(userId: string, notificationType: string) {
+  async subscribeToNotifications(
+    userId: string,
+    notificationType: string,
+    subscribe: boolean,
+  ) {
     return this.notificationsService.subscribeToNotifications(
       userId,
       notificationType,
+      subscribe,
     );
   }
 

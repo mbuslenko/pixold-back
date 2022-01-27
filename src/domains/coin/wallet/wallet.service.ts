@@ -10,7 +10,10 @@ import { accountTypeIsNotSupported } from '../../../common/consts/http-error-mes
 import { WalletRepository } from './persistance/wallet.repository';
 import { ConnectWalletDto } from '../../../api/wallet/dto/wallet.dto';
 import { sendNotification } from '../../../common/utils/telegram-notifications';
-import { sendTransactionToPixold, sendTransactionToUser } from '../../../common/stellar/transaction';
+import {
+  sendTransactionToPixold,
+  sendTransactionToUser,
+} from '../../../common/stellar/transaction';
 
 @Injectable()
 export class WalletService {
@@ -91,9 +94,9 @@ export class WalletService {
   }
 
   async sendCoinsToUser(userId: string, coins: number): Promise<void> {
-    const userWallet = await this.walletRepository.findOne({ 
+    const userWallet = await this.walletRepository.findOne({
       where: { ownerId: userId },
-     });
+    });
     const [pixoldWallet] = await this.walletRepository.getWallet('pixold');
 
     if (!userWallet) {
@@ -183,9 +186,9 @@ export class WalletService {
   }
 
   async sendCoinsToPixold(userId: string, coins: number): Promise<void> {
-    const userWallet = await this.walletRepository.findOne({ 
+    const userWallet = await this.walletRepository.findOne({
       where: { ownerId: userId },
-     });
+    });
     const pixoldWallet = await this.walletRepository.findOne({
       where: { ownerId: 'pixold' },
     });

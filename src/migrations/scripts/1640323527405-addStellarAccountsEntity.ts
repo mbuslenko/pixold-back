@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class addStellarAccountsEntity1640323527405 implements MigrationInterface {
+export class addStellarAccountsEntity1640323527405
+  implements MigrationInterface
+{
   name = 'addStellarAccountsEntity1640323527405';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

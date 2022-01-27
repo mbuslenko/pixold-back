@@ -1,8 +1,8 @@
-require('dotenv').config()
+require('dotenv').config();
 
 import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
 import { PixoldLogger } from './common/utils/logger';
@@ -39,10 +39,10 @@ const initSwagger = (app: INestApplication) => {
     .setDescription('Pixold API Documentation')
     .setVersion(`${process.env.npm_package_version}`)
     .addBearerAuth()
-    .build()
+    .build();
 
-  const document = SwaggerModule.createDocument(app, options)
-  SwaggerModule.setup('swagger', app, document)
-}
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('swagger', app, document);
+};
 
 bootstrap();

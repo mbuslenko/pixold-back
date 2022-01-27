@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class addUniqueFieldToPixelEntity1641930069281 implements MigrationInterface {
+export class addUniqueFieldToPixelEntity1641930069281
+  implements MigrationInterface
+{
   name = 'addUniqueFieldToPixelEntity1641930069281';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

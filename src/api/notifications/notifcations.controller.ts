@@ -26,6 +26,7 @@ export class NotifcationsController {
     return this.notificationsDomain.subscribeToNotifications(
       uid,
       body.notificationsType,
+      body.subscribe,
     );
   }
 }

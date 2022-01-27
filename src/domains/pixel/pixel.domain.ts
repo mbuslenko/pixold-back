@@ -31,7 +31,11 @@ export class PixelDomain {
     return this.pixelService.getHexagonInfo(numericId, userId);
   }
 
-  async changeHexagonType(numericId: number, type: 'attack' | 'miner' | 'defender', userId: string) {
+  async changeHexagonType(
+    numericId: number,
+    type: 'attack' | 'miner' | 'defender',
+    userId: string,
+  ) {
     return this.pixelService.changeType(numericId, type, userId);
   }
 

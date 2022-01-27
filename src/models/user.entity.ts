@@ -3,24 +3,24 @@ import { PixoldBaseEntity } from '../common/db/base-entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends PixoldBaseEntity<UserEntity> {
-    @Column({ unique: true })
-    username: string;
+  @Column({ unique: true })
+  username: string;
 
-    @Column({ name: 'first_name' })
-    firstName: string;
+  @Column({ name: 'first_name' })
+  firstName: string;
 
-    @Column({ name: 'last_name', nullable: true })
-    lastName: string;
+  @Column({ name: 'last_name', nullable: true })
+  lastName: string;
 
-    @Column({ unique: true })
-    email: string;
+  @Column({ unique: true })
+  email: string;
 
-    @Column({ name: 'last_logined_at', type: 'timestamp' })
-    lastLogin: Date;
+  @Column({ name: 'last_logined_at', type: 'timestamp' })
+  lastLogin: Date;
 
-    @Column({ name: 'avatar_url' })
-    avatarUrl: string;
+  @Column({ name: 'avatar_url' })
+  avatarUrl: string;
 
-    @Column({ name: 'access_token' })
-    accessToken: string;
+  @Column({ name: 'access_token' })
+  accessToken: string;
 }

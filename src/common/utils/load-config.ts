@@ -9,7 +9,9 @@ type ClassType<T> = {
 };
 
 export function loadConfig<T>(envSchema: ClassType<unknown>): T {
-  const object = plainToClass(envSchema, process.env, { enableImplicitConversion: true });
+  const object = plainToClass(envSchema, process.env, {
+    enableImplicitConversion: true,
+  });
 
   //@ts-ignore
   const errors = validateSync(object, {

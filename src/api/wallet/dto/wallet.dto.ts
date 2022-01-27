@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class ConnectWalletDto {
   @IsUUID()
   @IsNotEmpty()
-  userId: string
+  userId: string;
 
   @IsString()
   @IsNotEmpty()

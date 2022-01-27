@@ -36,8 +36,8 @@ export class FaqService {
 
   async createContent(props: CreateFaqDto) {
     return this.faqContentRepository.save(
-      this.faqContentRepository.create(props)
-    )
+      this.faqContentRepository.create(props),
+    );
   }
 }
 

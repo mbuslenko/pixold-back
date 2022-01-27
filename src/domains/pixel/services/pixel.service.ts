@@ -227,7 +227,7 @@ export class PixelService {
         owner: 'pixold',
         canAttack: false,
         coinsToUpgrade: 0,
-        isNotSubscribedOnNotifications: {
+        isSubscribedOnNotifications: {
           isAttacked: null,
           fullStorage: null,
         },
@@ -270,7 +270,7 @@ export class PixelService {
         hexagonRow.type,
         typeRow.level,
       ),
-      isNotSubscribedOnNotifications: {
+      isSubscribedOnNotifications: {
         isAttacked: await this.notificationsDomain.checkIsNotSubscribed(
           userId,
           'is-attacked',
@@ -413,7 +413,7 @@ export namespace PixelService {
     owner: string;
     canAttack: boolean;
     coinsToUpgrade: number;
-    isNotSubscribedOnNotifications: {
+    isSubscribedOnNotifications: {
       isAttacked: boolean;
       fullStorage: boolean;
     };

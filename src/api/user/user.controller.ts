@@ -22,7 +22,11 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { PixoldAuthGuard } from '../../common/guards/auth.guard';
 import { UserDomain } from '../../domains/user/user.domain';
 import { UserEntity } from '../../models';
-import { CheckUsernameOkResponse, GetUserByIdOkResponse, UpdateUsernameDto } from './dto/user.dto';
+import {
+  CheckUsernameOkResponse,
+  GetUserByIdOkResponse,
+  UpdateUsernameDto,
+} from './dto/user.dto';
 
 @ApiTags('user')
 @Controller('user')

@@ -9,7 +9,7 @@ export class PixelEntity extends PixoldBaseEntity<PixelEntity> {
   @Column({ type: 'varchar', default: 'without' })
   type: 'attack' | 'miner' | 'defender' | 'without';
 
-  @Column({ name: 'owner_id',default: 'pixold' })
+  @Column({ name: 'owner_id', default: 'pixold' })
   ownerId: string;
 
   @Column({ name: 'x_coordinate', type: 'real' })

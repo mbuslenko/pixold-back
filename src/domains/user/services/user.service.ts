@@ -12,7 +12,7 @@ import { UserRepository } from '../persistance/user.repository';
 
 @Injectable()
 export class UserService {
-  private logger = new Logger(`UserService`)
+  private logger = new Logger(`UserService`);
 
   constructor(
     private connection: Connection,
@@ -51,17 +51,17 @@ export class UserService {
 
     await this.connection.transaction(async (transactionManager) => {
       await Promise.all(
-        users.map(async user => {
+        users.map(async (user) => {
           await transactionManager.save(UserEntity, {
             ...user,
             accessToken: crypto
-            .createHash('sha256')
-            .update(AUTH_SALT + uuid.v4())
-            .digest('hex'),
-          })
-        })
-      )
-    })
+              .createHash('sha256')
+              .update(AUTH_SALT + uuid.v4())
+              .digest('hex'),
+          });
+        }),
+      );
+    });
 
     this.logger.log('Updating users access tokens finished');
   }

@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class changeLastNameToNullableInUserEntity1640371223841 implements MigrationInterface {
+export class changeLastNameToNullableInUserEntity1640371223841
+  implements MigrationInterface
+{
   name = 'changeLastNameToNullableInUserEntity1640371223841';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

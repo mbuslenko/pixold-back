@@ -10,6 +10,6 @@ export class FaqTopicsRepository extends Repository<FaqTopicsEntity> {
     FROM faq_topics "ft"
     LEFT JOIN faq_content "fq"
       ON "fq"."topic_id"::uuid = "ft"."id"
-    `)
+    `);
   }
 }

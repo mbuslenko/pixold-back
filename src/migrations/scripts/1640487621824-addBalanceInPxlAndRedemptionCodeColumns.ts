@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class addBalanceInPxlAndRedemptionCodeColumns1640487621824 implements MigrationInterface {
+export class addBalanceInPxlAndRedemptionCodeColumns1640487621824
+  implements MigrationInterface
+{
   name = 'addBalanceInPxlAndRedemptionCodeColumns1640487621824';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
