@@ -43,7 +43,7 @@ export class UserService {
     return this.userRepository.getUserInfoById(id);
   }
 
-  @Cron('0 10 * * * *')
+  @Cron('0 10 3 * * *')
   async updateUsersAccessTokenCron(): Promise<void> {
     this.logger.log('Updating users access tokens started');
 
