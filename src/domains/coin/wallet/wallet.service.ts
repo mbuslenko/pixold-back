@@ -190,7 +190,7 @@ export class WalletService {
       where: { ownerId: userId },
     });
     const pixoldWallet = await this.walletRepository.findOne({
-      where: { ownerId: 'pixold' },
+      where: { ownerId: '6370046c-ac93-4d19-a55f-c59c5d5211b3' },
     });
 
     if (!userWallet) {
