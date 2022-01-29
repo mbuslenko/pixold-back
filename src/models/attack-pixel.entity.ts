@@ -20,4 +20,7 @@ export class AttackPixelEntity extends PixoldBaseEntity<AttackPixelEntity> {
 
   @Column({ name: 'numeric_id', type: 'real' })
   numericId: number;
+
+  @Column({ type: 'real', default: 100 })
+  health: number;
 }

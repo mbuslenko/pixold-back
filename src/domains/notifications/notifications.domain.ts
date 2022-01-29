@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { SendInfoNotificationDto } from '../../api/notifications/dto/notifications.dto';
 import { NotificationsService } from './services/notifications.service';
 
 @Injectable()
@@ -22,5 +23,9 @@ export class NotificationsDomain {
       userId,
       notificationType,
     );
+  }
+
+  async sendInfoMessage(props: SendInfoNotificationDto) {
+    return this.notificationsService.sendInfoNotificationToUsers(props);
   }
 }

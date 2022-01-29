@@ -34,6 +34,6 @@ export class NotifcationsController {
   async sendInfoNotification(
     @Body() body: SendInfoNotificationDto,
   ){
-    
+    return this.notificationsDomain.sendInfoMessage(body);
   }
 }

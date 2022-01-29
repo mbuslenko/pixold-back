@@ -40,6 +40,6 @@ export class NotificationsService {
       throw new UnauthorizedException('Security token is invalid');
     }
 
-    return this.eventsGateWay.sendInfoMessage({ title: props.title, body: props.body });
+    this.eventsGateWay.sendInfoMessage({ title: props.title, body: props.body });
   }
 }

@@ -44,6 +44,13 @@ export class GameService {
 
   // TODO: Refactor this function to reduce its Cognitive Complexity from 86 to the 15 allowed. [+27 locations]
   async attackHexagon(userId: string, props: AttackHexagonDto): Promise<void> {
+    this.eventsGateway.sendAttackMessage({
+      to: userId,
+      type: 'alert',
+      message: `Your previous attack was failed`,
+    });
+
+
     // TODO: change to transaction
 
     const start = performance.now();
@@ -264,6 +271,16 @@ export class GameService {
       attackerPixel.ownerId,
       coinsSubstracted,
     );
+
+    await this.attackPixelRepository.substractHealth(
+      attackedPixel.ownerId,
+      50,
+    )
+
+    await this.defenderPixelRepository.substractHealth(
+      attackedPixel.ownerId,
+      50,
+    )
 
     const end = performance.now();
 

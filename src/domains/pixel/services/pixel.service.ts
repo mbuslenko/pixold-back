@@ -264,6 +264,7 @@ export class PixelService {
       type: hexagonRow.type,
       level: typeRow.level,
       coinsInStorage: typeRow.coinsInStorage ?? null,
+      health: typeRow.health ?? null,
       owner: ownerUsername,
       canAttack: hexagonRow.ownerId !== userId,
       coinsToUpgrade: await this.getAmountOfCoinsToUpgrade(
@@ -409,7 +410,8 @@ export namespace PixelService {
   export interface HexagonInfo {
     type: PixelTypes;
     level: PixelLevelsEnum;
-    coinsInStorage: number;
+    coinsInStorage?: number;
+    health?: number;
     owner: string;
     canAttack: boolean;
     coinsToUpgrade: number;

@@ -17,4 +17,7 @@ export class DefenderPixelEntity extends PixoldBaseEntity<DefenderPixelEntity> {
 
   @Column({ name: 'numeric_id', type: 'real' })
   numericId: number;
+
+  @Column({ type: 'real', default: 100 })
+  health: number;
 }
