@@ -11,10 +11,10 @@ export class NotificationsRepository extends Repository<NotificationsEntity> {
     if (subscribe === true) {
       return this.createQueryBuilder()
         .insert()
-        .values({
+        .values([{
           userId,
           type: notificationType,
-        })
+        }])
         .orIgnore();
     } else {
       return this.createQueryBuilder()
