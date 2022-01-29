@@ -8,3 +8,17 @@ export class SubscribeToNotificationsDto {
   @IsBoolean()
   subscribe: boolean;
 }
+
+export class SendInfoNotificationDto {
+  @IsString()
+  @IsNotEmpty()
+  securityToken: string;
+
+  @IsString()
+  @IsNotEmpty()
+  title: string;
+
+  @IsString()
+  @IsNotEmpty()
+  body: string;
+}

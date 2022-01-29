@@ -69,4 +69,7 @@ export class EnvDto {
 
   @IsString()
   TELEGRAM_BOT_TOKEN: string;
+
+  @IsString()
+  NOTIFICATIONS_SECURITY_TOKEN: string;
 }

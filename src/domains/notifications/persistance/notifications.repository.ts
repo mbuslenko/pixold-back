@@ -9,21 +9,16 @@ export class NotificationsRepository extends Repository<NotificationsEntity> {
     subscribe: boolean,
   ) {
     if (subscribe === true) {
-      return this.createQueryBuilder()
-        .insert()
-        .values([{
-          userId,
-          type: notificationType,
-        }])
-        .orIgnore();
+      return this
+        .save(
+          this.create({
+            userId,
+            type: notificationType,
+            lastNotifiedAt: new Date(),
+          })
+        )
     } else {
-      return this.createQueryBuilder()
-        .delete()
-        .from(NotificationsEntity)
-        .where({
-          userId,
-          type: notificationType,
-        });
+      return this.delete({ userId, type: notificationType });
     }
   }
 }

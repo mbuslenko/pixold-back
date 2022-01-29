@@ -25,6 +25,10 @@ export class EventsGateway
     this.server.emit('attack', message);
   }
 
+  sendInfoMessage(mesage: Object) {
+    this.server.emit('info', mesage);
+  }
+
   afterInit(server: Server) {
     this.logger.log('Initialized');
   }
