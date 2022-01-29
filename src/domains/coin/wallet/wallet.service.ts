@@ -97,7 +97,7 @@ export class WalletService {
     const userWallet = await this.walletRepository.findOne({
       where: { ownerId: userId },
     });
-    const [pixoldWallet] = await this.walletRepository.getWallet('pixold');
+    const [pixoldWallet] = await this.walletRepository.getWallet('6370046c-ac93-4d19-a55f-c59c5d5211b3');
 
     if (!userWallet) {
       throw new HttpException(
