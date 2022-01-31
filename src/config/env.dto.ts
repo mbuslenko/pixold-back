@@ -13,8 +13,8 @@ export class EnvDto {
   PORT: number = 3000;
 
   @IsString()
-  @IsIn(['development', 'development_with_coin', 'production'])
-  NODE_ENV: 'development' | 'development_with_coin' | 'production';
+  @IsIn(['development', 'development_with_coin', 'production', 'sync'])
+  NODE_ENV: 'development' | 'development_with_coin' | 'production' | 'sync';
 
   @IsString()
   DB_NAME: string;

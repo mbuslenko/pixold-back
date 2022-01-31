@@ -58,4 +58,8 @@ export class PixelDomain {
   async sendCoinsFromMinerToWallet(numericId: number, userId: string) {
     return this.pixelService.sendCoinsFromMinerToWallet(numericId, userId);
   }
+
+  async getAllAttacks() {
+    return this.pixelService.getAllAttacks();
+  }
 }
