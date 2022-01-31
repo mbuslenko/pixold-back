@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventsModule } from '../../events/events.module';
+import { AttacksEntity } from '../../models';
 import { CoinModule } from '../coin/coin.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { UserModule } from '../user/user.module';
@@ -22,6 +23,7 @@ import { PixelSyncService } from './services/pixel.sync.service';
       MinerPixelRepository,
       AttackPixelRepository,
       DefenderPixelRepository,
+      AttacksEntity,
     ]),
     CoinModule,
     UserModule,
