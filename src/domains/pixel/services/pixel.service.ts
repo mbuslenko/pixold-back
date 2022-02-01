@@ -86,7 +86,7 @@ export class PixelService {
 			}),
 		);
 
-		const attacks = await this.attacksRepository.find({ where: { isActive: true } })
+		const attacks = await this.attacksRepository.find({ where: { finished: false } })
 
 		return {
 			hexagons: result,
