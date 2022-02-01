@@ -49,7 +49,7 @@ export class EventsGateway
 export namespace EventsGateway {
   export interface AttackMessage {
     to: string;
-    type: 'alert' | 'info' | 'success' | 'error';
+    type: 'warning' | 'info' | 'success' | 'error';
     message: string;
   }
 

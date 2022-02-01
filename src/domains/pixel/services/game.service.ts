@@ -312,7 +312,7 @@ export class GameService {
 
 			return this.eventsGateway.sendAttackMessage({
 				to: userId,
-				type: 'alert',
+				type: 'warning',
 				message: `Your previous attack was failed`,
 			});
 		}
@@ -330,7 +330,7 @@ export class GameService {
 		setTimeout(() => {
 			this.eventsGateway.sendAttackMessage({
 				to: userId,
-				type: 'alert',
+				type: 'warning',
 				message: `Your previous attack was failed`,
 			});
 		}, finalTimeForAttack * 1000);
