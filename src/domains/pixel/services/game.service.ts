@@ -348,10 +348,6 @@ export class GameService {
 			where: { numericId },
 		});
 
-		const { ownerId } = await this.pixelRepository.findOne({
-			where: { numericId },
-		});
-
 		let percent = 0;
 
 		switch (row.level) {
@@ -368,7 +364,7 @@ export class GameService {
 				percent = 50;
 				break;
 			case PixelLevelsEnum.SUPREME:
-				percent = 65;
+				percent = 100;
 		}
 
 		let minedCoins = 0;
@@ -387,7 +383,7 @@ export class GameService {
 	}
 
 	willMine(percent: number): boolean {
-		return Math.random() * 100 < percent;
+		return Math.random() * 100 <= percent;
 	}
 
 	async checkIfThereAreEnoughCoins(coins: number): Promise<boolean> {
