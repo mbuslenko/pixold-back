@@ -378,8 +378,6 @@ export class GameService {
 			const check = await this.checkIfThereAreEnoughCoins(minedCoins);
 
 			if (check) {
-				await this.coinDomain.sendCoinsToUser(ownerId, minedCoins);
-
 				await this.minerPixelRepository.update(
 					{ numericId },
 					{ coinsInStorage: row.coinsInStorage + minedCoins },
