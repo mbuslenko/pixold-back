@@ -87,7 +87,7 @@ export class WalletService {
 
   async getPixoldCoinsLeft() {
     return this.walletRepository
-      .findOne({ where: { ownerId: 'bf0fbe8d-1dc3-4ffa-a967-8131feaff6d3' } })
+      .findOne({ where: { ownerId: '6370046c-ac93-4d19-a55f-c59c5d5211b3' } })
       .then((response) => {
         return response.balanceInPXL;
       });
