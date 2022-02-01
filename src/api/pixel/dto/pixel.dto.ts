@@ -16,6 +16,9 @@ export class GetAllPixelsOkResponse {
 export class GetAllPixelsOwnedByUsersOkResponse {
   @ApiProperty({ type: Array })
   username: number[];
+
+  @ApiProperty({ type: Array })
+  attacks: number[];
 }
 
 export class RedeemCodeDto {

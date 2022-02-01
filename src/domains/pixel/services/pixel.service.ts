@@ -56,7 +56,7 @@ export class PixelService {
 	}
 
 	async getAllPixelsOwnedByUsers(): Promise<
-		PixelService.GetAllPixelsResponse[]
+		PixelService.GetAllPixelsResponse
 	> {
 		const owners = await this.pixelRepository.getOwnersList();
 
@@ -86,7 +86,12 @@ export class PixelService {
 			}),
 		);
 
-		return result;
+		const attacks = await this.attacksRepository.find({ where: { isActive: true } })
+
+		return {
+			hexagons: result,
+			attacks,
+		};
 	}
 
 	async getAllPixels() {
@@ -442,9 +447,12 @@ export namespace PixelService {
 	}
 
 	export interface GetAllPixelsResponse {
-		[key: string]: {
-			numericId: number;
-		}[];
+		hexagons: {
+			[key: string]: {
+				numericId: number;
+			}[];
+		}[],
+		attacks: AttacksEntity[]
 	}
 
 	export interface GetRandomFreeHexagon {

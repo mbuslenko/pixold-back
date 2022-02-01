@@ -62,4 +62,8 @@ export class PixelDomain {
   async getAllAttacks() {
     return this.pixelService.getAllAttacks();
   }
+
+  async repairHexagon(numericId: number, userId: string) {
+    return this.gameService.repairHexagon(numericId, userId);
+  }
 }

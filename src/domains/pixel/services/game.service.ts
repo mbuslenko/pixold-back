@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { performance } from 'perf_hooks';
 import { Connection, Repository } from 'typeorm';
 
@@ -63,15 +67,21 @@ export class GameService {
 			where: { numericId: props.to },
 		});
 
-    const attack = await this.attacksRepository.save(
-      this.attacksRepository.create({
-        attackedX: attackedPixel.xCoordinate,
-        attackedY: attackedPixel.yCoordinate,
-        attackerX: attackerPixel.xCoordinate,
-        attackerY: attackerPixel.yCoordinate,
-        finished: false,
-      })
-    )
+		const attack = await this.attacksRepository.save(
+			this.attacksRepository.create({
+				attackedX: attackedPixel.xCoordinate,
+				attackedY: attackedPixel.yCoordinate,
+				attackerX: attackerPixel.xCoordinate,
+				attackerY: attackerPixel.yCoordinate,
+				finished: false,
+			}),
+		);
+
+		this.eventsGateway.sendMessageForMap({
+			from: attackerPixel.numericId,
+			to: attackedPixel.numericId,
+			attack: 'started',
+		});
 
 		const attackedHexagons: GameService.PixelInfo[] =
 			await this.pixelRepository.find({
@@ -285,10 +295,7 @@ export class GameService {
 			50,
 		);
 
-    await this.attacksRepository.update(
-      { id: attack.id },
-      { finished: true }
-    )
+		await this.attacksRepository.update({ id: attack.id }, { finished: true });
 
 		const end = performance.now();
 
@@ -327,6 +334,12 @@ export class GameService {
 				message: `Your previous attack was failed`,
 			});
 		}, finalTimeForAttack * 1000);
+
+		this.eventsGateway.sendMessageForMap({
+			from: attackerPixel.numericId,
+			to: attackedPixel.numericId,
+			attack: 'ended',
+		});
 	}
 
 	async mine(numericId: number) {
@@ -428,6 +441,23 @@ export class GameService {
 		return this.minerPixelRepository.query(
 			`SELECT SUM(coinsInStorage) FROM miner_pixels WHERE ownerId = '${userId}'`,
 		);
+	}
+
+	async repairHexagon(numericId: number, userId: string) {
+		const hexagon = await this.pixelRepository.findOne({
+			where: { numericId },
+		});
+
+		if (hexagon.type === 'miner') {
+			throw new BadRequestException('You can not repair miner hexagon');
+		} else if (hexagon.ownerId !== userId) {
+			throw new UnauthorizedException('You can not repair this hexagon');
+		}
+
+		// add logic here
+		const coinsToRepair = 0.5;
+
+		await this.coinDomain.sendCoinsToPixold(userId, coinsToRepair);
 	}
 }
 

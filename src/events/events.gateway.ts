@@ -25,6 +25,10 @@ export class EventsGateway
     this.server.emit('attack', message);
   }
 
+  sendMessageForMap(message: EventsGateway.MessageForMap) {
+    this.server.emit('map', message)
+  }
+
   sendInfoMessage(message: Object) {
     this.server.emit('info', message);
   }
@@ -47,5 +51,11 @@ export namespace EventsGateway {
     to: string;
     type: 'alert' | 'info' | 'success' | 'error';
     message: string;
+  }
+
+  export interface MessageForMap {
+    from: number;
+    to: number;
+    attack: 'started' | 'ended';
   }
 }

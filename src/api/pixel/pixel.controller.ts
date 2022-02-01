@@ -49,7 +49,7 @@ export class PixelController {
   //@UseGuards(PixoldAuthGuard)
   @ApiOperation({ summary: 'Get all pixels owned by users' })
   @ApiHeaders([
-    { name: 'Authorization', description: 'access tokn', required: true },
+    { name: 'Authorization', description: 'access token', required: true },
   ])
   @ApiOkResponse({ type: [GetAllPixelsOwnedByUsersOkResponse] })
   @Get('/all/owned')
@@ -182,5 +182,21 @@ export class PixelController {
   @Post('/send-coins')
   async sendCoins(@CurrentUser() { uid }: any, @Body() body: OneHexagonDto) {
     return this.pixelDomain.sendCoinsFromMinerToWallet(body.numericId, uid);
+  }
+
+  @HttpCode(200)
+  @UseGuards(PixoldAuthGuard)
+  @ApiOperation({ summary: 'Repair hexagon' })
+  @ApiBody({ schema: { example: { numericId: 228 } } })
+  @ApiHeaders([
+    {
+      name: 'Authorization',
+      description: 'access token',
+      required: true,
+    },
+  ])
+  @Post('/repair')
+  async repairHexagon(@CurrentUser() { uid }: any, @Body() body: OneHexagonDto) {
+    return this.pixelDomain.repairHexagon(body.numericId, uid);
   }
 }
