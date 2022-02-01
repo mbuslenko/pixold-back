@@ -20,6 +20,7 @@ import { MinerPixelRepository } from '../persistance/types/miner-pixel.repositor
 import { DefenderPixelRepository } from '../persistance/types/defender-pixel.repository';
 import { AttacksEntity } from '../../../models';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class GameService {
@@ -37,13 +38,13 @@ export class GameService {
 		private readonly connection: Connection,
 	) {}
 
+	@Cron('45 * * * * *')
 	async miningCron(): Promise<void> {
 		const miners = await this.minerPixelRepository.find({
 			select: ['numericId'],
 		});
 
 		await Promise.all(
-			// TODO: change to transaction
 			miners.map(async (el) => {
 				await this.mine(el.numericId);
 			}),

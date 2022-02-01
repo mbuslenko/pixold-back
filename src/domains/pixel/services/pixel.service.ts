@@ -41,9 +41,12 @@ export class PixelService {
 		const user = await this.userDomain.getUserById(userId);
 		const hexagon = await this.pixelRepository.findOne({
 			where: { numericId },
-		})
+		});
 
-		this.eventsGateway.handleNewHexagonOnMap({ numericId: hexagon.numericId, username: user.username })
+		this.eventsGateway.handleNewHexagonOnMap({
+			numericId: hexagon.numericId,
+			username: user.username,
+		});
 		return this.pixelRepository.update({ numericId }, { ownerId: userId });
 	}
 
@@ -63,9 +66,7 @@ export class PixelService {
 		});
 	}
 
-	async getAllPixelsOwnedByUsers(): Promise<
-		PixelService.GetAllPixelsResponse
-	> {
+	async getAllPixelsOwnedByUsers(): Promise<PixelService.GetAllPixelsResponse> {
 		const owners = await this.pixelRepository.getOwnersList();
 
 		const result = [];
@@ -94,7 +95,9 @@ export class PixelService {
 			}),
 		);
 
-		const attacks = await this.attacksRepository.find({ where: { finished: false } })
+		const attacks = await this.attacksRepository.find({
+			where: { finished: false },
+		});
 
 		return {
 			hexagons: result,
@@ -148,7 +151,10 @@ export class PixelService {
 
 		await this.pixelRepository.save(pixel);
 
-		this.eventsGateway.handleNewHexagonOnMap({ numericId: pixel.numericId, username: user.username })
+		this.eventsGateway.handleNewHexagonOnMap({
+			numericId: pixel.numericId,
+			username: user.username,
+		});
 	}
 
 	async getAmountOfCoinsToUpgrade(
@@ -463,8 +469,8 @@ export namespace PixelService {
 			[key: string]: {
 				numericId: number;
 			}[];
-		}[],
-		attacks: AttacksEntity[]
+		}[];
+		attacks: AttacksEntity[];
 	}
 
 	export interface GetRandomFreeHexagon {
