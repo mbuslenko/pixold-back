@@ -44,6 +44,10 @@ export class EventsGateway
   handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
   }
+
+  handleNewHexagonOnMap(message: EventsGateway.NewHexagonMessage) {
+    this.server.emit('newHexagon', message);
+  }
 }
 
 export namespace EventsGateway {
@@ -57,5 +61,10 @@ export namespace EventsGateway {
     from: number;
     to: number;
     attack: 'started' | 'ended';
+  }
+
+  export interface NewHexagonMessage {
+    numericId: number;
+    username: string;
   }
 }

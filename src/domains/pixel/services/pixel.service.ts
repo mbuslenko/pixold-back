@@ -6,6 +6,7 @@ import { Connection, Repository } from 'typeorm';
 import { PixelLevelsEnum } from '../../../common/consts/level.enum';
 import { PixelTypes } from '../../../common/consts/pixel-types.type';
 import { generateRandomColor } from '../../../common/utils/generate-color';
+import { EventsGateway } from '../../../events/events.gateway';
 import { AttacksEntity } from '../../../models';
 
 import { CoinDomain } from '../../coin/coin.domain';
@@ -28,6 +29,7 @@ export class PixelService {
 		private readonly coinDomain: CoinDomain,
 		private readonly userDomain: UserDomain,
 		private readonly notificationsDomain: NotificationsDomain,
+		private readonly eventsGateway: EventsGateway,
 
 		private readonly minerPixelRepository: MinerPixelRepository,
 		private readonly attackPixelRepository: AttackPixelRepository,
@@ -36,6 +38,12 @@ export class PixelService {
 
 	// ! TESTING PURPOSES ONLY
 	async buyHexagon(userId: string, numericId: number) {
+		const user = await this.userDomain.getUserById(userId);
+		const hexagon = await this.pixelRepository.findOne({
+			where: { numericId },
+		})
+
+		this.eventsGateway.handleNewHexagonOnMap({ numericId: hexagon.numericId, username: user.username })
 		return this.pixelRepository.update({ numericId }, { ownerId: userId });
 	}
 
@@ -126,6 +134,8 @@ export class PixelService {
 			where: { redemptionCode },
 		});
 
+		const user = await this.userDomain.getUserById(userId);
+
 		if (!pixel) {
 			throw new BadRequestException({ message: 'Invalid code' });
 		} else if (pixel.ownerId == userId) {
@@ -137,6 +147,8 @@ export class PixelService {
 		pixel.ownerId = userId;
 
 		await this.pixelRepository.save(pixel);
+
+		this.eventsGateway.handleNewHexagonOnMap({ numericId: pixel.numericId, username: user.username })
 	}
 
 	async getAmountOfCoinsToUpgrade(
