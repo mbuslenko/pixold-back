@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { throws } from 'assert';
 import { Connection, Repository } from 'typeorm';
 
 import { PixelLevelsEnum } from '../../../common/consts/level.enum';
@@ -384,7 +383,7 @@ export class PixelService {
 				newLevel = PixelLevelsEnum.PRO;
 				break;
 			case PixelLevelsEnum.PRO:
-				newLevel = PixelLevelsEnum.PRO;
+				newLevel = PixelLevelsEnum.SUPREME;
 				break;
 			case PixelLevelsEnum.SUPREME:
 				throw new BadRequestException({
@@ -429,6 +428,12 @@ export class PixelService {
 		}
 
 		const coinsInStorage = minerPixelRow.coinsInStorage;
+
+		if (coinsInStorage <= 0) {
+			throw new BadRequestException({
+				message: 'Miner does not have coins in storage',
+			})
+		}
 
 		const wallet = await this.pixelRepository.findOne({
 			where: { numericId },

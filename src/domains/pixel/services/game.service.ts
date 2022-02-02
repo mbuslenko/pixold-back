@@ -38,7 +38,7 @@ export class GameService {
 		private readonly connection: Connection,
 	) {}
 
-	@Cron('45 * * * * *')
+	@Cron('0 15 * * * *')
 	async miningCron(): Promise<void> {
 		const miners = await this.minerPixelRepository.find({
 			select: ['numericId'],
@@ -53,7 +53,6 @@ export class GameService {
 
 	// TODO: Refactor this function to reduce its Cognitive Complexity from 86 to the 15 allowed.
 	async attackHexagon(userId: string, props: AttackHexagonDto): Promise<void> {
-		// TODO: change to transaction
 		const start = performance.now();
 
 		const attackerRow = await this.attackPixelRepository.findOne({
