@@ -122,8 +122,9 @@ export class WalletService {
         message: `Not enough coins in Pixold`,
       });
     }
-
-    sendTransactionToUser(userWallet.publicKey, coins.toString());
+ 
+    // ! TODO: Uncomment
+    //sendTransactionToUser(userWallet.publicKey, coins.toString());
 
     await this.walletRepository.update(
       { id: userWallet.id },
@@ -210,7 +211,8 @@ export class WalletService {
       );
     }
 
-    sendTransactionToPixold(userWallet.secretKey, coins.toString());
+    // ! TODO: Uncomment
+    // sendTransactionToPixold(userWallet.secretKey, coins.toString());
 
     await this.walletRepository.update(
       { id: userWallet.id },
