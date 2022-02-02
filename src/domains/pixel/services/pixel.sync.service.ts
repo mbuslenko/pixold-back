@@ -1,5 +1,4 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { Connection } from 'typeorm';
 
 import * as data from '../data/pixels-map.json';
 import { NODE_ENV } from '../../../config';
@@ -33,6 +32,15 @@ export class PixelSyncService implements OnModuleInit {
         .values(preparedData)
         .orIgnore()
         .execute();
+    }
+
+    if (NODE_ENV == 'export') {
+      const dataFromDB = await this.pixelRepository.find();
+
+      //write data to json file
+      const json = JSON.stringify(dataFromDB, null, 2);
+      const fs = require('fs');
+      fs.writeFileSync('pixels-list.json', json);
     }
   }
 }

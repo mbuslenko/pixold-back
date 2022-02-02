@@ -430,9 +430,17 @@ export class PixelService {
 
 		const coinsInStorage = minerPixelRow.coinsInStorage;
 
-		const { ownerId } = await this.pixelRepository.findOne({
+		const wallet = await this.pixelRepository.findOne({
 			where: { numericId },
 		});
+
+		if (!wallet) {
+			throw new BadRequestException({
+				message: 'You have to connect wallet before send coins to it',
+			});
+		}
+		
+		const ownerId = wallet.ownerId;
 
 		if (ownerId !== userId) {
 			throw new BadRequestException({
