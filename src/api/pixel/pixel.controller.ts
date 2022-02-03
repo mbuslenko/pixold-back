@@ -5,7 +5,7 @@ import {
   HttpCode,
   Param,
   Post,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -14,12 +14,10 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
-
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { PixoldAuthGuard } from '../../common/guards/auth.guard';
-
 import { PixelDomain } from '../../domains/pixel/pixel.domain';
 import {
   AttackHexagonDto,
@@ -27,10 +25,10 @@ import {
   GetAllPixelsOkResponse,
   GetAllPixelsOwnedByUsersOkResponse,
   HexagonInfoOkResponse,
-  OneFreeHexagonOkResponse,
-  RedeemCodeDto,
-  OneHexagonDto,
+  OneFreeHexagonOkResponse, OneHexagonDto, RedeemCodeDto
 } from './dto/pixel.dto';
+
+
 
 @ApiTags('hexagon')
 @Controller('hexagon')

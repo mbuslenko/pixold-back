@@ -54,18 +54,25 @@ export class GameService {
 	// TODO: Refactor this function to reduce its Cognitive Complexity from 86 to the 15 allowed.
 	async attackHexagon(userId: string, props: AttackHexagonDto): Promise<void> {
 		const start = performance.now();
+		console.log(props)
 
 		const attackerRow = await this.attackPixelRepository.findOne({
 			where: { numericId: props.from },
 		});
 
+		console.log(11111111111111111111111111111111111)
+
 		const attackerPixel = await this.pixelRepository.findOne({
 			where: { numericId: props.from },
 		});
 
+		console.log(2222222222222222222222222222222222222222222222222222)
+
 		const attackedPixel = await this.pixelRepository.findOne({
 			where: { numericId: props.to },
 		});
+
+		console.log(333333333333333333333333333333333333333333333333)
 
 		const attack = await this.attacksRepository.save(
 			this.attacksRepository.create({
@@ -74,6 +81,8 @@ export class GameService {
 				finished: false,
 			}),
 		);
+
+		console.log(444444444444444444444444444444444444444444444444444444)
 
 		this.eventsGateway.sendMessageForMap({
 			from: attackerPixel.numericId,

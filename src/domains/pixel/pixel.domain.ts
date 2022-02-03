@@ -45,7 +45,7 @@ export class PixelDomain {
 
   async attackHexagon(userId: string, props: AttackHexagonDto) {
     return this.gameService.attackHexagon(userId, props);
-  }
+  } 
 
   async upgradeHexagon(userId: string, numericId: number) {
     return this.pixelService.upgradeHexagon(userId, numericId);

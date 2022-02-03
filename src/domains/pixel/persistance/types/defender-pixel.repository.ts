@@ -14,21 +14,25 @@ export class DefenderPixelRepository extends Repository<DefenderPixelEntity> {
         `);
 	}
 
-	async substractHealth(
-		userId: string,
-		percent: number,
-	): Promise<void> {
-		return this.query(`
-        UPDATE defender_pixel
-        SET health = (
-        SELECT 
-            health - (health * ${percent} / 100) 
-        FROM defender_pixel 
-        WHERE numeric_id = defender_pixel.numeric_id
-        )
-        JOIN pixel
+	async substractHealth(userId: string, percent: number): Promise<void> {
+		const allDefenders = await this.query(
+			`
+        SELECT defender_pixel.numeric_id
+        FROM defender_pixel
+        LEFT JOIN pixel
         ON pixel.numeric_id = defender_pixel.numeric_id
         WHERE pixel.owner_id = '${userId}'
+        `,
+		).then((res) => res.map((item) => item.numeric_id));
+
+        if (allDefenders.length === 0) {
+            return
+        }
+
+		return this.query(`
+        UPDATE defender_pixel
+        SET health = health - (health * ${percent} / 100) 
+        WHERE defender_pixel.numeric_id in (${allDefenders})
     `);
 	}
 }
