@@ -69,10 +69,8 @@ export class GameService {
 
 		const attack = await this.attacksRepository.save(
 			this.attacksRepository.create({
-				attackedX: attackedPixel.xCoordinate,
-				attackedY: attackedPixel.yCoordinate,
-				attackerX: attackerPixel.xCoordinate,
-				attackerY: attackerPixel.yCoordinate,
+				attackedId: attackedPixel.numericId,
+				attackerId: attackerPixel.numericId,
 				finished: false,
 			}),
 		);

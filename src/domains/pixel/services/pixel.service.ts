@@ -54,12 +54,12 @@ export class PixelService {
 
 		return attacks.map(async (el) => {
 			const { ownerId: userId } = await this.pixelRepository.findOne({
-				where: { xCoordinate: el.attackerX, yCoordinate: el.attackedY },
+				where: { numericId: el.attackerId },
 			});
 
 			return {
-				from: [el.attackerX, el.attackerY],
-				to: [el.attackedX, el.attackedY],
+				from: el.attackerId,
+				to: el.attackedId,
 				userId,
 			};
 		});
@@ -432,7 +432,7 @@ export class PixelService {
 		if (coinsInStorage <= 0) {
 			throw new BadRequestException({
 				message: 'Miner does not have coins in storage',
-			})
+			});
 		}
 
 		const wallet = await this.pixelRepository.findOne({
@@ -444,7 +444,7 @@ export class PixelService {
 				message: 'You have to connect wallet before send coins to it',
 			});
 		}
-		
+
 		const ownerId = wallet.ownerId;
 
 		if (ownerId !== userId) {
