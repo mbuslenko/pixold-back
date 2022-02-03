@@ -33,6 +33,10 @@ export class MinerPixelRepository extends Repository<MinerPixelEntity> {
 			return result;
 		});
 
+    if (allCoins === 0) {
+      return
+    }
+
 		const newCoinsNumber =
 			(allCoins - substractedCoinsNumber) / miningHexagonsNumber;
 
