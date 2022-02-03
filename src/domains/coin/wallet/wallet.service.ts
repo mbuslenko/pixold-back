@@ -14,10 +14,11 @@ import {
   sendTransactionToPixold,
   sendTransactionToUser,
 } from '../../../common/stellar/transaction';
+import { UserDomain } from '../../user/user.domain';
 
 @Injectable()
 export class WalletService {
-  constructor(private readonly walletRepository: WalletRepository) {}
+  constructor(private readonly walletRepository: WalletRepository, private readonly userDomain: UserDomain) {}
 
   async connectWallet(props: ConnectWalletDto) {
     const accountInfo = await stellar
@@ -55,8 +56,10 @@ export class WalletService {
         }),
       );
 
+      const user = await this.userDomain.getUserById(props.userId);
+
       return {
-        id: wallet.id,
+        username: user.username,
         balanceInUSD: wallet.balanceInUSD,
         balanceInXLM: wallet.balanceInXLM,
         balanceInPXL: wallet.balanceInPXL,
