@@ -10,3 +10,4 @@ export * from './scripts/1643228165302-addNotificationsEntity';
 export * from './scripts/1643590574685-addAttacksEntity';
 export * from './scripts/1643846207096-changeToNumericIdInAttacksEntity';
 export * from './scripts/1643935937107-addOpenseaUrlFieldToPixel';
+export * from './scripts/1644014420095-addUserToAttacksEntity';

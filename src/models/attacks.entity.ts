@@ -11,4 +11,8 @@ export class AttacksEntity extends PixoldBaseEntity<AttacksEntity> {
 
 	@Column()
 	finished: boolean;
+
+	// TODO: Delete default
+	@Column({ name: 'attacked_user_id', default: 'deprecated_row' })
+	attackedUserId: string;
 }

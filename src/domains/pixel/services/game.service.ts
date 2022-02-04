@@ -51,6 +51,28 @@ export class GameService {
 		);
 	}
 
+	private async canAttack(userId: string, props: AttackHexagonDto) {
+		const { health: attackerHealth } = await this.attackPixelRepository.findOne({
+			where: { numericId: props.from },
+		})
+
+		if (attackerHealth < 25) {
+			throw new BadRequestException({ message: 'Attacker is too weak, repair it first' });
+		}
+
+		const isAttacked = await this.attacksRepository.findOne({ where: { attackedId: userId, finished: false } })
+
+		if (isAttacked) {
+			throw new BadRequestException({ message: 'This user is already under attack' });
+		}
+
+		const haveWallet = await this.coinDomain.getWallet(userId, false)
+
+		if (!haveWallet) {
+			throw new BadRequestException({ message: 'You have no wallet, connect it first' });
+		}
+	}
+
 	// TODO: Refactor this function to reduce its Cognitive Complexity from 86 to the 15 allowed.
 	async attackHexagon(userId: string, props: AttackHexagonDto): Promise<void> {
 		const start = performance.now();
@@ -60,19 +82,15 @@ export class GameService {
 			where: { numericId: props.from },
 		});
 
-		console.log(11111111111111111111111111111111111);
-
 		const attackerPixel = await this.pixelRepository.findOne({
 			where: { numericId: props.from },
 		});
-
-		console.log(2222222222222222222222222222222222222222222222222222);
 
 		const attackedPixel = await this.pixelRepository.findOne({
 			where: { numericId: props.to },
 		});
 
-		console.log(333333333333333333333333333333333333333333333333);
+		await this.canAttack(userId, props);
 
 		const attack = await this.attacksRepository.save(
 			this.attacksRepository.create({
@@ -81,8 +99,6 @@ export class GameService {
 				finished: false,
 			}),
 		);
-
-		console.log(444444444444444444444444444444444444444444444444444444);
 
 		this.eventsGateway.sendMessageForMap({
 			from: attackerPixel.numericId,
@@ -302,8 +318,6 @@ export class GameService {
 			50,
 		);
 
-		await this.attacksRepository.update({ id: attack.id }, { finished: true });
-
 		const end = performance.now();
 
 		const finalTimeForAttack = timeForAttackInSeconds - (end - start);
@@ -347,6 +361,8 @@ export class GameService {
 			to: attackedPixel.numericId,
 			attack: 'ended',
 		});
+
+		await this.attacksRepository.update({ id: attack.id }, { finished: true });
 	}
 
 	async mine(numericId: number) {
