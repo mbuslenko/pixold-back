@@ -38,8 +38,12 @@ export class MinerPixelRepository extends Repository<MinerPixelEntity> {
       return
     }
 
-		const newCoinsNumber =
+		let newCoinsNumber =
 			(allCoins - substractedCoinsNumber) / miningHexagonsNumber;
+
+		if (newCoinsNumber < 1) {
+			newCoinsNumber = 0
+		}
 
     const allMiners = await this.query(`
     SELECT miner_pixel.numeric_id
