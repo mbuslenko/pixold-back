@@ -60,7 +60,7 @@ export class GameService {
 			throw new BadRequestException({ message: 'Attacker is too weak, repair it first' });
 		}
 
-		const isAttacked = await this.attacksRepository.findOne({ where: { attackedId: userId, finished: false } })
+		const isAttacked = await this.attacksRepository.findOne({ where: { attackedUserId: userId, finished: false } })
 
 		if (isAttacked) {
 			throw new BadRequestException({ message: 'This user is already under attack' });
