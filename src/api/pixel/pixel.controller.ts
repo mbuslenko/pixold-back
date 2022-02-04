@@ -197,4 +197,9 @@ export class PixelController {
   async repairHexagon(@CurrentUser() { uid }: any, @Body() body: OneHexagonDto) {
     return this.pixelDomain.repairHexagon(body.numericId, uid);
   }
+
+  @Get('/fill/links')
+  async fillOpenSeaLinks() {
+    return this.pixelDomain.fillOpenSeaLinks();
+  }
 }

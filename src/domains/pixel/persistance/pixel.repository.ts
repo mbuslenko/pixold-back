@@ -15,9 +15,10 @@ export class PixelRepository extends Repository<PixelEntity> {
 
   async getOneRandomFreeHexagon() {
     return this.query(`
-      SELECT numeric_id
+      SELECT numeric_id, opensea_url
       FROM pixel
       WHERE owner_id = 'pixold'
+      AND opensea_url IS NOT NULL
       ORDER BY RANDOM()
       LIMIT 1
     `);

@@ -3,12 +3,14 @@ import { AttackHexagonDto } from '../../api/pixel/dto/pixel.dto';
 import { GameService } from './services/game.service';
 
 import { PixelService } from './services/pixel.service';
+import { PixelSyncService } from './services/pixel.sync.service';
 
 @Injectable()
 export class PixelDomain {
   constructor(
     private readonly pixelService: PixelService,
     private readonly gameService: GameService,
+    private readonly pixelSyncService: PixelSyncService,
   ) {}
 
   async getAllPixels() {
@@ -65,5 +67,9 @@ export class PixelDomain {
 
   async repairHexagon(numericId: number, userId: string) {
     return this.gameService.repairHexagon(numericId, userId);
+  }
+
+  async fillOpenSeaLinks() {
+    return this.pixelSyncService.fillOpenSeaUrls();
   }
 }

@@ -18,11 +18,11 @@ export class MinerPixelRepository extends Repository<MinerPixelEntity> {
 			`
       SELECT 
       coins_in_storage
-    FROM miner_pixel
-    JOIN pixel
-    ON pixel.numeric_id = miner_pixel.numeric_id
-    WHERE pixel.owner_id = '${userId}'
-    `,
+      FROM miner_pixel
+      JOIN pixel
+      ON pixel.numeric_id = miner_pixel.numeric_id
+      WHERE pixel.owner_id = '${userId}'
+      `,
 		).then((res) => {
 			let result = 0;
 			res.map((item) => {
@@ -34,6 +34,7 @@ export class MinerPixelRepository extends Repository<MinerPixelEntity> {
 		});
 
     if (allCoins === 0) {
+      // ! TODO: проверить на наличие минера и выдать ошибку
       return
     }
 
