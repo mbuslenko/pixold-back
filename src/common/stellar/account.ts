@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import axios from 'axios';
 
 import { STELLAR_API_URL } from '../../config';
@@ -13,7 +14,10 @@ export const getAccountInfo = async (
         method: 'GET',
         url: STELLAR_API_URL + '/accounts/' + publicKey,
       })
-      .then((response) => response.data);
+      .then((response) => response.data)
+      .catch(error => {
+        throw new BadRequestException({ message: `The credentials provided were not found on the Stellar network` });
+      });
 
   const balances = parseBalances(response.balances);
 
