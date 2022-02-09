@@ -51,7 +51,7 @@ export class GameService {
 		);
 	}
 
-	private async canAttack(userId: string, props: AttackHexagonDto) {
+	private async canAttack(userId: string, props: AttackHexagonDto): Promise<boolean> {
 		const { health: attackerHealth } = await this.attackPixelRepository.findOne(
 			{
 				where: { numericId: props.from },
@@ -59,9 +59,7 @@ export class GameService {
 		);
 
 		if (attackerHealth < 25) {
-			throw new BadRequestException({
-				message: 'Attacker is too weak, repair it first',
-			});
+			return false
 		}
 
 		const isAttacked = await this.attacksRepository.findOne({
@@ -69,18 +67,16 @@ export class GameService {
 		});
 
 		if (isAttacked) {
-			throw new BadRequestException({
-				message: 'This user is already under attack',
-			});
+			return false
 		}
 
 		const haveWallet = await this.coinDomain.getWallet(userId, false);
 
 		if (!haveWallet) {
-			throw new BadRequestException({
-				message: 'You have no wallet, connect it first',
-			});
+			return false
 		}
+
+		return true
 	}
 
 	// TODO: Refactor this function to reduce its Cognitive Complexity from 86 to the 15 allowed.
@@ -100,7 +96,14 @@ export class GameService {
 			where: { numericId: props.to },
 		});
 
-		await this.canAttack(userId, props);
+		const canAttack = await this.canAttack(userId, props);
+		if (canAttack === false) {
+			return this.eventsGateway.sendAttackMessage({
+				to: userId,
+				message: 'Your attacker is too weak. Repair it first.',
+				type: 'error',
+			})
+		}
 
 		const attack = await this.attacksRepository.save(
 			this.attacksRepository.create({
@@ -345,7 +348,7 @@ export class GameService {
 				this.eventsGateway.sendAttackMessage({
 					to: userId,
 					type: 'success',
-					message: `Your previous attack was successfully completed!`,
+					message: `Your previous attack was successfully completed`,
 				});
 
 				return this.eventsGateway.sendMessageForMap({
@@ -358,7 +361,7 @@ export class GameService {
 			 this.eventsGateway.sendAttackMessage({
 				to: userId,
 				type: 'warning',
-				message: `Your previous attack was failed!`,
+				message: `Your previous attack was failed`,
 			});
 
 			return this.eventsGateway.sendMessageForMap({
