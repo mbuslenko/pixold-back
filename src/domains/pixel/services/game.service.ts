@@ -52,24 +52,34 @@ export class GameService {
 	}
 
 	private async canAttack(userId: string, props: AttackHexagonDto) {
-		const { health: attackerHealth } = await this.attackPixelRepository.findOne({
-			where: { numericId: props.from },
-		})
+		const { health: attackerHealth } = await this.attackPixelRepository.findOne(
+			{
+				where: { numericId: props.from },
+			},
+		);
 
 		if (attackerHealth < 25) {
-			throw new BadRequestException({ message: 'Attacker is too weak, repair it first' });
+			throw new BadRequestException({
+				message: 'Attacker is too weak, repair it first',
+			});
 		}
 
-		const isAttacked = await this.attacksRepository.findOne({ where: { attackedUserId: userId, finished: false } })
+		const isAttacked = await this.attacksRepository.findOne({
+			where: { attackedUserId: userId, finished: false },
+		});
 
 		if (isAttacked) {
-			throw new BadRequestException({ message: 'This user is already under attack' });
+			throw new BadRequestException({
+				message: 'This user is already under attack',
+			});
 		}
 
-		const haveWallet = await this.coinDomain.getWallet(userId, false)
+		const haveWallet = await this.coinDomain.getWallet(userId, false);
 
 		if (!haveWallet) {
-			throw new BadRequestException({ message: 'You have no wallet, connect it first' });
+			throw new BadRequestException({
+				message: 'You have no wallet, connect it first',
+			});
 		}
 	}
 
@@ -274,23 +284,25 @@ export class GameService {
 					}
 			}
 		} else {
+			attackSuccess = true;
+
 			switch (attackerRow.level) {
 				case PixelLevelsEnum.STARTER:
 					// random percent between 15 and 30
 					percentRobbed = Math.floor(Math.random() * 15) + 15;
-					timeForAttackInSeconds += hexagonsNumber * 60;
+					timeForAttackInSeconds += hexagonsNumber * 15;
 					break;
 				case PixelLevelsEnum.MIDDLE:
 					percentRobbed = Math.floor(Math.random() * 15) + 30;
-					timeForAttackInSeconds += hexagonsNumber * 55;
+					timeForAttackInSeconds += hexagonsNumber * 12;
 					break;
 				case PixelLevelsEnum.PRO:
 					percentRobbed = Math.floor(Math.random() * 15) + 45;
-					timeForAttackInSeconds += hexagonsNumber * 50;
+					timeForAttackInSeconds += hexagonsNumber * 10;
 					break;
 				case PixelLevelsEnum.SUPREME:
 					percentRobbed = Math.floor(Math.random() * 20) + 60;
-					timeForAttackInSeconds += hexagonsNumber * 45;
+					timeForAttackInSeconds += hexagonsNumber * 9;
 					break;
 			}
 		}
@@ -320,21 +332,39 @@ export class GameService {
 
 		const end = performance.now();
 
-		const finalTimeForAttack = timeForAttackInSeconds - (end - start);
+		const finalTimeForAttack = timeForAttackInSeconds - ((end / 1000) - (start / 1000));
+		console.log({ finalTimeForAttack })
 
 		if (finalTimeForAttack < 0) {
+			await this.attacksRepository.update(
+				{ id: attack.id },
+				{ finished: true },
+			);
+
 			if (attackSuccess === true) {
-				return this.eventsGateway.sendAttackMessage({
+				this.eventsGateway.sendAttackMessage({
 					to: userId,
 					type: 'success',
-					message: `Your previous attack was successfully completed`,
+					message: `Your previous attack was successfully completed!`,
+				});
+
+				return this.eventsGateway.sendMessageForMap({
+					from: attackerPixel.numericId,
+					to: attackedPixel.numericId,
+					attack: 'ended',
 				});
 			}
 
-			return this.eventsGateway.sendAttackMessage({
+			 this.eventsGateway.sendAttackMessage({
 				to: userId,
 				type: 'warning',
-				message: `Your previous attack was failed`,
+				message: `Your previous attack was failed!`,
+			});
+
+			return this.eventsGateway.sendMessageForMap({
+				from: attackerPixel.numericId,
+				to: attackedPixel.numericId,
+				attack: 'ended',
 			});
 		}
 
@@ -345,24 +375,32 @@ export class GameService {
 					type: 'success',
 					message: `Your previous attack was successfully completed`,
 				});
-			}, finalTimeForAttack * 1000);
+
+				this.attacksRepository.update({ id: attack.id }, { finished: true });
+
+				this.eventsGateway.sendMessageForMap({
+					from: attackerPixel.numericId,
+					to: attackedPixel.numericId,
+					attack: 'ended',
+				});
+			}, finalTimeForAttack);
+		} else {
+			setTimeout(() => {
+				this.eventsGateway.sendAttackMessage({
+					to: userId,
+					type: 'warning',
+					message: `Your previous attack was failed`,
+				});
+	
+				this.attacksRepository.update({ id: attack.id }, { finished: true });
+	
+				this.eventsGateway.sendMessageForMap({
+					from: attackerPixel.numericId,
+					to: attackedPixel.numericId,
+					attack: 'ended',
+				});
+			}, finalTimeForAttack);
 		}
-
-		setTimeout(() => {
-			this.eventsGateway.sendAttackMessage({
-				to: userId,
-				type: 'warning',
-				message: `Your previous attack was failed`,
-			});
-		}, finalTimeForAttack * 1000);
-
-		this.eventsGateway.sendMessageForMap({
-			from: attackerPixel.numericId,
-			to: attackedPixel.numericId,
-			attack: 'ended',
-		});
-
-		await this.attacksRepository.update({ id: attack.id }, { finished: true });
 	}
 
 	async mine(numericId: number) {
