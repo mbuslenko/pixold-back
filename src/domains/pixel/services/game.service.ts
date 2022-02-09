@@ -51,7 +51,7 @@ export class GameService {
 		);
 	}
 
-	private async canAttack(userId: string, props: AttackHexagonDto): Promise<boolean> {
+	private async canAttack(userId: string, props: AttackHexagonDto): Promise<{ status: boolean, message: string }> {
 		const { health: attackerHealth } = await this.attackPixelRepository.findOne(
 			{
 				where: { numericId: props.from },
@@ -59,7 +59,10 @@ export class GameService {
 		);
 
 		if (attackerHealth < 25) {
-			return false
+			return {
+				status: false,
+				message: 'Your attacker is too weak, repair it first',
+			}
 		}
 
 		const isAttacked = await this.attacksRepository.findOne({
@@ -67,16 +70,25 @@ export class GameService {
 		});
 
 		if (isAttacked) {
-			return false
+			return {
+				status: false,
+				message: 'This user is already under attack',
+			}
 		}
 
 		const haveWallet = await this.coinDomain.getWallet(userId, false);
 
 		if (!haveWallet) {
-			return false
+			return {
+				status: false,
+				message: 'Attacks can only be made by users with a connected wallet',
+			}
 		}
 
-		return true
+		return {
+			status: true,
+			message: null
+		}
 	}
 
 	// TODO: Refactor this function to reduce its Cognitive Complexity from 86 to the 15 allowed.
@@ -97,10 +109,10 @@ export class GameService {
 		});
 
 		const canAttack = await this.canAttack(userId, props);
-		if (canAttack === false) {
+		if (canAttack.status === false) {
 			return this.eventsGateway.sendAttackMessage({
 				to: userId,
-				message: 'Your attacker is too weak. Repair it first.',
+				message: canAttack.message,
 				type: 'error',
 			})
 		}
