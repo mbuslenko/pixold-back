@@ -30,9 +30,13 @@ export class AttackPixelRepository extends Repository<AttackPixelEntity> {
 		}
 
 		return this.query(`
-        UPDATE attack_pixel
-        SET health = health - (health * ${percent} / 100) 
-        WHERE attack_pixel.numeric_id in (${allAttackers})
+        update attack_pixel 
+        set health = 
+	        case 
+	        when (health - (health * ${percent} / 100)) < 1 then 0
+	        else health - (health * ${percent} / 100)
+	        end
+        where id in (${allAttackers})
     `);
 	}
 }

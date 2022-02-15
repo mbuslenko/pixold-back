@@ -30,9 +30,13 @@ export class DefenderPixelRepository extends Repository<DefenderPixelEntity> {
         }
 
 		return this.query(`
-        UPDATE defender_pixel
-        SET health = health - (health * ${percent} / 100) 
-        WHERE defender_pixel.numeric_id in (${allDefenders})
+        update defender_pixel 
+        set health = 
+	        case 
+	        when (health - (health * ${percent} / 100)) < 1 then 0
+	        else health - (health * ${percent} / 100)
+	        end
+        where id in (${allDefenders})
     `);
 	}
 }

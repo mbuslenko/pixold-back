@@ -1,8 +1,8 @@
 {
   "name": "pixold-back",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "version": "1.2.4",
+  "description": "Backend part for Pixold",
+  "author": "mbuslenko",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
