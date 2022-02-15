@@ -43,8 +43,7 @@ export class PixelController {
     return this.pixelDomain.getAllPixels();
   }
 
-  // TODO: uncomment when we will go to production
-  //@UseGuards(PixoldAuthGuard)
+  @UseGuards(PixoldAuthGuard)
   @ApiOperation({ summary: 'Get all pixels owned by users' })
   @ApiHeaders([
     { name: 'Authorization', description: 'access token', required: true },
