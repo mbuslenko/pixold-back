@@ -36,7 +36,7 @@ export class DefenderPixelRepository extends Repository<DefenderPixelEntity> {
 	        when (health - (health * ${percent} / 100)) < 1 then 0
 	        else health - (health * ${percent} / 100)
 	        end
-        where id in (${allDefenders})
+        where numeric_id in (${allDefenders})
     `);
 	}
 }

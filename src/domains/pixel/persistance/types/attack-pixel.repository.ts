@@ -36,7 +36,7 @@ export class AttackPixelRepository extends Repository<AttackPixelEntity> {
 	        when (health - (health * ${percent} / 100)) < 1 then 0
 	        else health - (health * ${percent} / 100)
 	        end
-        where id in (${allAttackers})
+        where numeric_id in (${allAttackers})
     `);
 	}
 }
