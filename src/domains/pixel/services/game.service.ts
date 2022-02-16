@@ -525,15 +525,15 @@ export class GameService {
 		}
 
 		// add logic here
-		const coinsToRepair = 0.5;
+		const coinsToRepair = 20;
+
+		await this.coinDomain.sendCoinsToPixold(userId, coinsToRepair);
 
 		if (hexagon.type === 'defender') {
 			await this.defenderPixelRepository.update({ numericId }, { health: 100 });
 		} else if (hexagon.type === 'attack') {
 			await this.attackPixelRepository.update({ numericId }, { health: 100 });
 		}
-
-		await this.coinDomain.sendCoinsToPixold(userId, coinsToRepair);
 	}
 }
 
