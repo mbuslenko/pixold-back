@@ -268,6 +268,7 @@ export class PixelService {
 				coinsInStorage: 0,
 				owner: 'pixold',
 				canAttack: false,
+				coinsToRepair: 0,
 				coinsToUpgrade: 0,
 				isNotSubscribedOnNotifications: {
 					isAttacked: null,
@@ -309,6 +310,7 @@ export class PixelService {
 			health: typeRow.health ?? null,
 			owner: ownerUsername,
 			canAttack: hexagonRow.ownerId !== userId,
+			coinsToRepair: 20,
 			coinsToUpgrade: await this.getAmountOfCoinsToUpgrade(
 				hexagonRow.type,
 				typeRow.level,
@@ -470,6 +472,7 @@ export namespace PixelService {
 		owner: string;
 		canAttack: boolean;
 		coinsToUpgrade: number;
+		coinsToRepair: number;
 		isNotSubscribedOnNotifications: {
 			isAttacked: boolean;
 			fullStorage: boolean;

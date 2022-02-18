@@ -62,6 +62,9 @@ export class HexagonInfoOkResponse {
 
   @ApiProperty()
   coinsToUpgrade: number;
+
+  @ApiProperty()
+  coinsToRepair: number;
 }
 
 export class ChangeHexagonTypeDto {
