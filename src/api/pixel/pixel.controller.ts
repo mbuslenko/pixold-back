@@ -105,6 +105,7 @@ export class PixelController {
       example: { numericId: 'number', type: `'attack' | 'miner' | 'defender'` },
     },
   })
+  @ApiOkResponse({ type: HexagonInfoOkResponse })
   @ApiHeaders([
     {
       name: 'Authorization',
@@ -145,6 +146,7 @@ export class PixelController {
   @UseGuards(PixoldAuthGuard)
   @ApiOperation({ summary: 'Upgrade hexagon' })
   @ApiBody({ schema: { example: { numericId: 228 } } })
+  @ApiOkResponse({ type: HexagonInfoOkResponse })
   @ApiHeaders([
     {
       name: 'Authorization',

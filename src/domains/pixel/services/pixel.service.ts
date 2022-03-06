@@ -207,7 +207,7 @@ export class PixelService {
 		numericId: number,
 		type: PixelTypes,
 		userId: string,
-	): Promise<void> {
+	): Promise<PixelService.HexagonInfo> {
 		const row = await this.pixelRepository.findOne({ where: { numericId } });
 
 		if (row.ownerId !== userId) {
@@ -247,6 +247,8 @@ export class PixelService {
 		}
 
 		await this.pixelRepository.update({ numericId }, { type });
+
+		return this.getHexagonInfo(numericId, userId);
 	}
 
 	async getHexagonInfo(
