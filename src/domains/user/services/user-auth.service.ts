@@ -1,7 +1,8 @@
 import * as uuid from 'uuid';
 import * as crypto from 'crypto';
+import axios from 'axios';
 
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { AUTH_SALT } from '../../../config';
 import { generateToken } from '../../../common/utils/generate-token';
@@ -20,7 +21,16 @@ export class UserAuthService {
     private readonly coinDomain: CoinDomain,
   ) {}
 
-  async authenticateService(props: AuthDto) {
+  async authenticateService(props: AuthDto, ip: string) {
+    const { data: countryResponse } = await axios.request({
+      method: 'GET',
+      url: `https://ipinfo.io/${ip}?token=53699f999401a2`
+    })
+
+    if (countryResponse === 'UA') {
+      throw new BadRequestException(`You cannot use Pixold from this country`)
+    }
+
     const row = await this.userRepository.findOne({
       where: {
         email: props.email,

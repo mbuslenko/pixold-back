@@ -10,8 +10,8 @@ export class UserDomain {
     private readonly userService: UserService,
   ) {}
 
-  async authenticate(props: AuthDto) {
-    return this.userAuthService.authenticateService(props);
+  async authenticate(props: AuthDto, ip: string) {
+    return this.userAuthService.authenticateService(props, ip);
   }
 
   async updateUsername(id: string, username: string) {

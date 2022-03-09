@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Request } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserDomain } from '../../domains/user/user.domain';
 import { AuthDto, AuthResponseDto } from './dto/auth.dto';
@@ -22,7 +22,7 @@ export class AuthController {
   })
   @HttpCode(200)
   @Post()
-  async authenticate(@Body() body: AuthDto) {
-    return this.userDomain.authenticate(body);
+  async authenticate(@Body() body: AuthDto, @Request() req: any) {
+    return this.userDomain.authenticate(body, req.ip);
   }
 }
