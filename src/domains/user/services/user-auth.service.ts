@@ -27,6 +27,8 @@ export class UserAuthService {
       url: `https://ipinfo.io/${ip}?token=53699f999401a2`
     })
 
+    console.log(countryResponse)
+
     if (countryResponse.country === 'UA') {
       throw new BadRequestException(`You cannot use Pixold from this country`)
     }
