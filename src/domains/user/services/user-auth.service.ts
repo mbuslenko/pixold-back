@@ -22,6 +22,8 @@ export class UserAuthService {
   ) {}
 
   async authenticateService(props: AuthDto, ip: string) {
+    console.log(ip)
+
     const { data: countryResponse } = await axios.request({
       method: 'GET',
       url: `https://ipinfo.io/${ip}?token=53699f999401a2`
