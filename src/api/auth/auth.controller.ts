@@ -23,6 +23,6 @@ export class AuthController {
   @HttpCode(200)
   @Post()
   async authenticate(@Body() body: AuthDto, @Request() req: any) {
-    return this.userDomain.authenticate(body, req.ip);
+    return this.userDomain.authenticate(body, req.remoteAddress);
   }
 }
