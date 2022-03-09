@@ -22,16 +22,12 @@ export class UserAuthService {
   ) {}
 
   async authenticateService(props: AuthDto, ip: string) {
-    console.log(ip)
-
     const { data: countryResponse } = await axios.request({
       method: 'GET',
       url: `https://ipinfo.io/${ip}?token=53699f999401a2`
     })
 
-    console.log(countryResponse)
-
-    if (countryResponse.country === 'UA') {
+    if (countryResponse.country === 'RU') {
       throw new BadRequestException(`You cannot use Pixold from this country`)
     }
 
