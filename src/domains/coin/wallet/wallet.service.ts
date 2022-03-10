@@ -14,6 +14,7 @@ import {
 	sendTransactionToPixold,
 	sendTransactionToUser,
 } from '../../../common/stellar/transaction';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class WalletService {
@@ -227,4 +228,20 @@ export class WalletService {
 			{ balanceInPXL: newPixoldBalance },
 		);
 	}
+
+	@Cron(CronExpression.EVERY_6_HOURS)
+	async updateBalances(): Promise<void> {
+		const wallets = await this.walletRepository.find()
+		
+    await Promise.all(
+      wallets.map(async (wallet) => {
+        const balances = await stellar.getAccountInfo(wallet.publicKey);
+
+        wallet.balanceInXLM = balances.balanceInXLM;
+				wallet.balanceInUSD = balances.balanceInUSD;
+
+				await this.walletRepository.save(wallet);
+      })
+    )
+  }
 }
