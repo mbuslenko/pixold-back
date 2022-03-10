@@ -216,6 +216,8 @@ export class PixelService {
 			});
 		}
 
+		const healthOrCoinsInStorage = await this.pixelRepository.getHealthOrCoinsInStorage(numericId);
+
 		await this.pixelRepository.clearTypeForHexagon(numericId);
 
 		switch (type) {
@@ -224,6 +226,7 @@ export class PixelService {
 					this.attackPixelRepository.create({
 						numericId,
 						level: PixelLevelsEnum.STARTER,
+						health: healthOrCoinsInStorage,
 					}),
 				);
 				break;
@@ -241,6 +244,7 @@ export class PixelService {
 					this.defenderPixelRepository.create({
 						numericId,
 						level: PixelLevelsEnum.STARTER,
+						health: healthOrCoinsInStorage,
 					}),
 				);
 				break;

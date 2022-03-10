@@ -24,6 +24,30 @@ export class PixelRepository extends Repository<PixelEntity> {
     `);
   }
 
+  async getHealthOrCoinsInStorage(numericId: number) {
+    let result = 100;
+
+    const attack = await this.query(`
+      SELECT health
+      FROM attack_pixel
+      WHERE numeric_id = ${numericId}
+    `);
+
+    const defender = await this.query(`
+      SELECT health
+      FROM defender_pixel
+      WHERE numeric_id = ${numericId}
+    `);
+
+    if (attack.length) {
+      result += attack[0].health;
+    } else if (defender.length) {
+      result += defender[0].health;
+    }
+
+    return result;
+  }
+
   async clearTypeForHexagon(numericId: number) {
     await this.query(`
     DELETE FROM
