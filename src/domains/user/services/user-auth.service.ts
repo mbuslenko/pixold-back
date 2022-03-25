@@ -45,11 +45,11 @@ export class UserAuthService {
 		}
 
 		if (props.platform === 'google') {
-			if (checkGoogleAuthToken(props.accessToken, props.email)) {
+			if ((await checkGoogleAuthToken(props.accessToken, props.email)) === false) {
 				throw new UnauthorizedException('Google auth token is not valid');
 			}
 		} else if (props.platform === 'facebook') {
-			if (checkFacebookAuthToken(props.accessToken, props.email)) {
+			if ((await checkFacebookAuthToken(props.accessToken, props.email)) === false) {
 				throw new UnauthorizedException('Facebook auth token is not valid');
 			}
 		}
