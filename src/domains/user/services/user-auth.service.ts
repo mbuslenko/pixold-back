@@ -21,6 +21,7 @@ import {
 	checkFacebookAuthToken,
 	checkGoogleAuthToken,
 } from '../../../common/utils/check-access-token';
+import whitelist from '../whitelist';
 
 @Injectable()
 export class UserAuthService {
@@ -36,7 +37,11 @@ export class UserAuthService {
 		});
 
 		if (countryResponse.country === 'RU' || countryResponse.country === 'BY') {
-			throw new BadRequestException(`You cannot use Pixold from this country`);
+			if (!whitelist.includes(ip)) {
+				throw new BadRequestException(
+					`You cannot use Pixold from this country`,
+				);
+			}
 		}
 
 		if (props.platform === 'google') {
