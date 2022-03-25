@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
+  IsIn,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -27,6 +28,14 @@ export class AuthDto {
   @IsNotEmpty()
   @IsUrl()
   avatarUrl: string;
+
+  @IsString()
+  @IsNotEmpty()
+  accessToken: string
+
+  @IsString()
+  @IsIn(['google', 'facebook'])
+  platform: 'google' | 'facebook'
 }
 
 export class AuthResponseDto {

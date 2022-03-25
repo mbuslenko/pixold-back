@@ -2,6 +2,7 @@ import {
 	HttpException,
 	Injectable,
 	InternalServerErrorException,
+	Logger,
 } from '@nestjs/common';
 
 import * as stellar from '../../../common/stellar';
@@ -18,6 +19,8 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class WalletService {
+	private logger = new Logger()
+
 	constructor(private readonly walletRepository: WalletRepository) {}
 
 	async connectWallet(props: ConnectWalletDto) {
@@ -241,6 +244,7 @@ export class WalletService {
 				wallet.balanceInUSD = balances.balanceInUSD;
 
 				await this.walletRepository.save(wallet);
+				this.logger.log(`Updated balance of ${wallet.publicKey}`);
       })
     )
   }
