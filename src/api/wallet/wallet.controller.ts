@@ -51,6 +51,8 @@ export class WalletController {
     return this.coinDomain.connectWallet(props);
   }
 
+  
+
   @ApiOperation({ summary: `Get user's wallet` })
   @ApiOkResponse({ type: GetWalletOkResponse })
   @ApiHeaders([

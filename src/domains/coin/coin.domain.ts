@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { ConnectWalletDto } from '../../api/wallet/dto/wallet.dto';
+import { UserIdDto } from '../../api/wallet/dto/wallet.dto';
 import { CoinService } from './coin/coin.service';
 import { WalletService } from './wallet/wallet.service';
 
@@ -11,16 +11,12 @@ export class CoinDomain {
     private readonly coinService: CoinService,
   ) {}
 
-  async connectWallet(props: ConnectWalletDto) {
-    return this.walletService.connectWallet(props);
+  async generateWallet(props: UserIdDto) {
+    return this.walletService.generateWallet(props);
   }
 
-  async getWallet(userId: string, throwError: boolean) {
-    return this.walletService.getWallet(userId, throwError);
-  }
-
-  async getPixoldCoinsLeft() {
-    return this.walletService.getPixoldCoinsLeft();
+  async getWallet(props: UserIdDto, throwError: boolean) {
+    return this.walletService.getWallet(props, throwError);
   }
 
   async getAmountInCoins(amountInUsd: number) {
@@ -33,13 +29,5 @@ export class CoinDomain {
 
   async sendCoinsToPixold(userId: string, coins: number) {
     return this.walletService.sendCoinsToPixold(userId, coins);
-  }
-
-  async substractCoinsFromPixoldBalance(coins: number) {
-    return this.walletService.substractCoinsFromPixoldBalance(coins);
-  }
-
-  async substractCoinsFromUserBalance(userId: string, coins: number) {
-    return this.walletService.substractCoinsFromUserBalance(userId, coins);
   }
 }

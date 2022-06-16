@@ -1,3 +1,13 @@
+/*
+*
+*
+* DEPRECATED - use getAccountInfo from solana
+* we transferred all functionality to the solana base for profitable prospects 
+*
+*
+*/
+
+
 import { BadRequestException } from '@nestjs/common';
 import axios from 'axios';
 

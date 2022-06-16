@@ -15,6 +15,12 @@ export class ConnectWalletDto {
   secret: string;
 }
 
+export class UserIdDto {
+  @IsUUID()
+  @IsNotEmpty()
+  userId: string;
+}
+
 export class ConnectWalletOkResponse {
   @ApiProperty()
   id: string;
