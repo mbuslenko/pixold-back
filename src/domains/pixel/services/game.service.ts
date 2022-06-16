@@ -8,7 +8,6 @@ import { Connection, Repository } from 'typeorm';
 
 import { AttackHexagonDto } from '../../../api/pixel/dto/pixel.dto';
 import { PixelLevelsEnum } from '../../../common/consts/level.enum';
-import { sendNotification } from '../../../common/utils/telegram-notifications';
 import { PixelTypes } from '../../../common/consts/pixel-types.type';
 
 import { CoinDomain } from '../../coin/coin.domain';
@@ -76,7 +75,7 @@ export class GameService {
 			}
 		}
 
-		const haveWallet = await this.coinDomain.getWallet(userId, false);
+		const haveWallet = await this.coinDomain.getWallet({ userId }, false);
 
 		if (!haveWallet) {
 			return {
@@ -446,36 +445,15 @@ export class GameService {
 		if (this.willMine(percent)) {
 			minedCoins = (Math.floor(Math.random() * 10) + 1) / 2;
 
-			const check = await this.checkIfThereAreEnoughCoins(minedCoins);
-
-			if (check) {
-				await this.minerPixelRepository.update(
-					{ numericId },
-					{ coinsInStorage: row.coinsInStorage + minedCoins },
-				);
-			}
+			await this.minerPixelRepository.update(
+				{ numericId },
+				{ coinsInStorage: row.coinsInStorage + minedCoins },
+			);
 		}
 	}
 
 	willMine(percent: number): boolean {
 		return Math.random() * 100 <= percent;
-	}
-
-	async checkIfThereAreEnoughCoins(coins: number): Promise<boolean> {
-		const coinsLeft = await this.coinDomain.getPixoldCoinsLeft();
-
-		if (coinsLeft < 100) {
-			sendNotification(
-				`[ERROR] @mbuslenko @myroslavvv You have ${coinsLeft} coins left. Mining stopped for all accounts.`,
-			);
-
-			return;
-		} else if (coinsLeft < 10_000) {
-			sendNotification(`[WARNING] You have ${coinsLeft} coins left.`);
-			return;
-		}
-
-		return coinsLeft > coins;
 	}
 
 	findClosestHexagon(

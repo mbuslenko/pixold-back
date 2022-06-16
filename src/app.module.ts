@@ -17,6 +17,7 @@ import { FaqModule } from './domains/faq/faq.module';
 import { CoinModule } from './domains/coin/coin.module';
 import { EventsModule } from './events/events.module';
 import { NotificationsModule } from './domains/notifications/notifications.module';
+import { SolanaModule } from './domains/solana/solana.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { NotificationsModule } from './domains/notifications/notifications.modul
     CoinModule,
     EventsModule,
     NotificationsModule,
+    SolanaModule,
   ],
   controllers: [
     api.UserController,

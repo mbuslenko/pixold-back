@@ -1,3 +1,13 @@
+/*
+*
+*
+* DEPRECATED - use sendTransactionToPixold and sendTransactionToUser from solana
+* we transferred all functionality to the solana base for profitable prospects 
+*
+*
+*/
+
+
 import {
 	BadRequestException,
 	InternalServerErrorException,
